@@ -6,9 +6,10 @@ interface CameraPreviewProps {
   error: string;
   photos?: string[];
   isComplete?: boolean;
+  countdown?: number | null;
 }
 
-export function CameraPreview({ videoRef, stream, error, photos = [], isComplete = false }: CameraPreviewProps) {
+export function CameraPreview({ videoRef, stream, error, photos = [], isComplete = false, countdown = null }: CameraPreviewProps) {
   return (
     <div className="w-full max-w-4xl flex flex-col items-center gap-8">
       {error && (
@@ -43,7 +44,15 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
           />
         )}
 
-        {stream && !isComplete && (
+        {countdown !== null && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10 backdrop-blur-sm">
+            <span className="text-[180px] font-black text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.4)] animate-pulse">
+              {countdown}
+            </span>
+          </div>
+        )}
+
+        {stream && !isComplete && countdown === null && (
           <div className="absolute top-6 left-6 flex items-center gap-3 px-4 py-2 bg-black/40 backdrop-blur-md rounded-full border border-white/20 shadow-xl">
             <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse" />
             <span className="text-sm font-bold text-white tracking-wider uppercase">Live</span>
