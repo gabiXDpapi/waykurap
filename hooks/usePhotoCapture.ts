@@ -1,7 +1,7 @@
 import { useState, RefObject } from "react";
 
 export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
-  const [photo, setPhoto] = useState<string | null>(null);
+  const [photos, setPhotos] = useState<string[]>([]);
 
   const handleTakePhoto = () => {
     if (videoRef.current) {
@@ -12,26 +12,28 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
       if (ctx) {
         ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
         const dataUrl = canvas.toDataURL("image/png");
-        setPhoto(dataUrl);
+        setPhotos((prev) => [...prev, dataUrl]);
       }
     }
   };
 
   const handleExportPhoto = () => {
-    if (photo) {
-      const a = document.createElement("a");
-      a.href = photo;
-      a.download = `photo-${Date.now()}.png`;
-      a.click();
+    if (photos.length > 0) {
+      photos.forEach((photo, index) => {
+        const a = document.createElement("a");
+        a.href = photo;
+        a.download = `photo-${Date.now()}-${index + 1}.png`;
+        a.click();
+      });
     }
   };
 
   const handleRetake = () => {
-    setPhoto(null);
+    setPhotos([]);
   };
 
   return {
-    photo,
+    photos,
     handleTakePhoto,
     handleExportPhoto,
     handleRetake,
