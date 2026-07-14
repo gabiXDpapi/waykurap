@@ -4,6 +4,7 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
   const [photos, setPhotos] = useState<string[]>([]);
   const [countdown, setCountdown] = useState<number | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
+  const [showFlash, setShowFlash] = useState(false);
   const isMounted = useRef(true);
 
   useEffect(() => {
@@ -46,8 +47,15 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
       
       const photo = captureSinglePhoto();
       if (photo) {
+        setShowFlash(true);
         newPhotos.push(photo);
         setPhotos([...newPhotos]);
+
+        setTimeout(() => {
+          if (isMounted.current) {
+            setShowFlash(false);
+          }
+        }, 150);
       }
 
       // Small pause before the next countdown
@@ -80,6 +88,7 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     photos,
     countdown,
     isCapturing,
+    showFlash,
     handleTakePhoto,
     handleExportPhoto,
     handleRetake,
