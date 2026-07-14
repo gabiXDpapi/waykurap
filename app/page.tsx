@@ -2,15 +2,18 @@
 
 import { useState } from "react";
 import { useCamera } from "../hooks/useCamera";
+import { usePhotoCapture } from "../hooks/usePhotoCapture";
 import { CameraPreview } from "../components/CameraPreview";
 import { ActionButtons } from "../components/ActionButtons";
 import { FrameSelector } from "../components/FrameSelector";
-
-const FRAMES = ["No Frame", "Polaroid", "Film Strip", "Neon Lights", "Elegant Gold"];
+import { PhotoCountSelector } from "../components/PhotoCountSelector";
+import { FRAMES, PHOTO_COUNTS } from "../constants/config";
 
 export default function Home() {
   const { videoRef, stream, error } = useCamera();
+  const { photo, handleTakePhoto, handleExportPhoto, handleRetake } = usePhotoCapture(videoRef);
   const [selectedFrame, setSelectedFrame] = useState(FRAMES[1]); // Default to Polaroid
+  const [photoCount, setPhotoCount] = useState(PHOTO_COUNTS[0]); // Default to 3
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-[#F8FAFC] font-sans p-6 md:p-12">
@@ -18,16 +21,31 @@ export default function Home() {
       
         {/* Video & Action Buttons Area */}
         <div className="w-full max-w-4xl flex flex-col items-center">
-          <CameraPreview videoRef={videoRef} stream={stream} error={error} />
-          <ActionButtons />
+          <CameraPreview videoRef={videoRef} stream={stream} error={error} photo={photo} />
+          <ActionButtons 
+            onTakePhoto={handleTakePhoto}
+            onExportPhoto={handleExportPhoto}
+            onRetake={handleRetake}
+            hasPhoto={!!photo}
+          />
         </div>
 
-        {/* Sidebar UI (Frames only) */}
-        <FrameSelector 
-          frames={FRAMES} 
-          selectedFrame={selectedFrame} 
-          onSelectFrame={setSelectedFrame} 
-        />
+        {/* Sidebar UI (Options) */}
+        <div className="flex flex-col gap-6 w-full xl:w-auto items-center xl:items-start">
+          {photo ? (
+            <FrameSelector 
+              frames={FRAMES} 
+              selectedFrame={selectedFrame} 
+              onSelectFrame={setSelectedFrame} 
+            />
+          ) : (
+            <PhotoCountSelector 
+              counts={PHOTO_COUNTS}
+              selectedCount={photoCount}
+              onSelectCount={setPhotoCount}
+            />
+          )}
+        </div>
 
       </div>
     </div>
