@@ -11,7 +11,7 @@ import { FRAMES, PHOTO_COUNTS } from "../constants/config";
 
 export default function Home() {
   const { videoRef, stream, error } = useCamera();
-  const { photos, handleTakePhoto, handleExportPhoto, handleRetake } = usePhotoCapture(videoRef);
+  const { photos, countdown, isCapturing, handleTakePhoto, handleExportPhoto, handleRetake } = usePhotoCapture(videoRef);
   const [selectedFrame, setSelectedFrame] = useState(FRAMES[1]); // Default to Polaroid
   const [photoCount, setPhotoCount] = useState(PHOTO_COUNTS[0]); // Default to 3
 
@@ -23,14 +23,20 @@ export default function Home() {
 
         {/* Video & Action Buttons Area */}
         <div className="w-full max-w-4xl flex flex-col items-center">
-          <CameraPreview videoRef={videoRef} stream={stream} error={error} photos={photos} isComplete={isComplete} />
+          <CameraPreview 
+            videoRef={videoRef} 
+            stream={stream} 
+            error={error} 
+            photos={photos} 
+            isComplete={isComplete} 
+            countdown={countdown} 
+          />
           <ActionButtons
-            onTakePhoto={handleTakePhoto}
+            onTakePhoto={() => handleTakePhoto(photoCount)}
             onExportPhoto={handleExportPhoto}
             onRetake={handleRetake}
             isComplete={isComplete}
-            photosTaken={photos.length}
-            targetCount={photoCount}
+            isCapturing={isCapturing}
           />
         </div>
 
