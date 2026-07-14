@@ -11,7 +11,7 @@ import { FRAMES, PHOTO_COUNTS } from "../constants/config";
 
 export default function Home() {
   const { videoRef, stream, error } = useCamera();
-  const { photos, countdown, isCapturing, handleTakePhoto, handleExportPhoto, handleRetake } = usePhotoCapture(videoRef);
+  const { photos, countdown, isCapturing, showFlash, handleTakePhoto, handleExportPhoto, handleRetake } = usePhotoCapture(videoRef);
   const [selectedFrame, setSelectedFrame] = useState(FRAMES[1]); // Default to Polaroid
   const [photoCount, setPhotoCount] = useState(PHOTO_COUNTS[0]); // Default to 3
 
@@ -30,6 +30,7 @@ export default function Home() {
             photos={photos} 
             isComplete={isComplete} 
             countdown={countdown} 
+            showFlash={showFlash}
           />
           <ActionButtons
             onTakePhoto={() => handleTakePhoto(photoCount)}
