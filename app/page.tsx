@@ -2,14 +2,15 @@
 
 import { useState } from "react";
 import { useCamera } from "../hooks/useCamera";
+import { usePhotoCapture } from "../hooks/usePhotoCapture";
 import { CameraPreview } from "../components/CameraPreview";
 import { ActionButtons } from "../components/ActionButtons";
 import { FrameSelector } from "../components/FrameSelector";
-
-const FRAMES = ["No Frame", "Polaroid", "Film Strip", "Neon Lights", "Elegant Gold"];
+import { FRAMES } from "../constants/config";
 
 export default function Home() {
   const { videoRef, stream, error } = useCamera();
+  const { photo, handleTakePhoto, handleExportPhoto, handleRetake } = usePhotoCapture(videoRef);
   const [selectedFrame, setSelectedFrame] = useState(FRAMES[1]); // Default to Polaroid
 
   return (
@@ -18,8 +19,13 @@ export default function Home() {
       
         {/* Video & Action Buttons Area */}
         <div className="w-full max-w-4xl flex flex-col items-center">
-          <CameraPreview videoRef={videoRef} stream={stream} error={error} />
-          <ActionButtons />
+          <CameraPreview videoRef={videoRef} stream={stream} error={error} photo={photo} />
+          <ActionButtons 
+            onTakePhoto={handleTakePhoto}
+            onExportPhoto={handleExportPhoto}
+            onRetake={handleRetake}
+            hasPhoto={!!photo}
+          />
         </div>
 
         {/* Sidebar UI (Frames only) */}
