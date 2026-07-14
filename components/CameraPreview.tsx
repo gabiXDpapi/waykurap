@@ -4,9 +4,10 @@ interface CameraPreviewProps {
   videoRef: RefObject<HTMLVideoElement | null>;
   stream: MediaStream | null;
   error: string;
+  photo?: string | null;
 }
 
-export function CameraPreview({ videoRef, stream, error }: CameraPreviewProps) {
+export function CameraPreview({ videoRef, stream, error, photo }: CameraPreviewProps) {
   return (
     <div className="w-full max-w-4xl flex flex-col items-center gap-8">
       {error && (
@@ -24,16 +25,20 @@ export function CameraPreview({ videoRef, stream, error }: CameraPreviewProps) {
             <p className="text-sm text-zinc-500 mt-2">Please accept the browser popup to continue</p>
           </div>
         )}
-        
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          muted
-          className={`w-full h-full object-cover transition-opacity duration-1000 ${stream ? 'opacity-100' : 'opacity-0'}`}
-        />
-        
-        {stream && (
+
+        {photo ? (
+          <img src={photo} alt="Captured" className="w-full h-full object-cover" />
+        ) : (
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            muted
+            className={`w-full h-full object-cover transition-opacity duration-1000 ${stream ? 'opacity-100' : 'opacity-0'}`}
+          />
+        )}
+
+        {stream && !photo && (
           <div className="absolute top-6 left-6 flex items-center gap-3 px-4 py-2 bg-black/40 backdrop-blur-md rounded-full border border-white/20 shadow-xl">
             <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse" />
             <span className="text-sm font-bold text-white tracking-wider uppercase">Live</span>
