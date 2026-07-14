@@ -32,16 +32,19 @@ export default function Home() {
 
         {/* Sidebar UI (Options) */}
         <div className="flex flex-col gap-6 w-full xl:w-auto items-center xl:items-start">
-          <FrameSelector 
-            frames={FRAMES} 
-            selectedFrame={selectedFrame} 
-            onSelectFrame={setSelectedFrame} 
-          />
-          <PhotoCountSelector 
-            counts={PHOTO_COUNTS}
-            selectedCount={photoCount}
-            onSelectCount={setPhotoCount}
-          />
+          {photo ? (
+            <FrameSelector 
+              frames={FRAMES} 
+              selectedFrame={selectedFrame} 
+              onSelectFrame={setSelectedFrame} 
+            />
+          ) : (
+            <PhotoCountSelector 
+              counts={PHOTO_COUNTS}
+              selectedCount={photoCount}
+              onSelectCount={setPhotoCount}
+            />
+          )}
         </div>
 
       </div>
