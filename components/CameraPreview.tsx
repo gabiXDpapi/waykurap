@@ -4,10 +4,13 @@ interface CameraPreviewProps {
   videoRef: RefObject<HTMLVideoElement | null>;
   stream: MediaStream | null;
   error: string;
-  photo?: string | null;
+  photos?: string[];
+  isComplete?: boolean;
+  countdown?: number | null;
+  showFlash?: boolean;
 }
 
-export function CameraPreview({ videoRef, stream, error, photo }: CameraPreviewProps) {
+export function CameraPreview({ videoRef, stream, error, photos = [], isComplete = false, countdown = null, showFlash = false }: CameraPreviewProps) {
   return (
     <div className="w-full max-w-4xl flex flex-col items-center gap-8">
       {error && (
@@ -26,8 +29,12 @@ export function CameraPreview({ videoRef, stream, error, photo }: CameraPreviewP
           </div>
         )}
 
-        {photo ? (
-          <img src={photo} alt="Captured" className="w-full h-full object-cover" />
+        {isComplete && photos.length > 0 ? (
+          <div className={`w-full h-full grid gap-2 p-2 ${photos.length === 1 ? 'grid-cols-1' : photos.length === 2 ? 'grid-cols-2' : 'grid-cols-2 lg:grid-cols-3'} bg-zinc-100`}>
+            {photos.map((p, i) => (
+              <img key={i} src={p} alt={`Captured ${i + 1}`} className="w-full h-full object-cover rounded-xl shadow-sm" />
+            ))}
+          </div>
         ) : (
           <video
             ref={videoRef}
@@ -38,7 +45,18 @@ export function CameraPreview({ videoRef, stream, error, photo }: CameraPreviewP
           />
         )}
 
-        {stream && !photo && (
+        {/* Capture Flash Overlay */}
+        <div className={`absolute inset-0 bg-white pointer-events-none transition-opacity duration-75 z-20 ${showFlash ? 'opacity-100' : 'opacity-0'}`} />
+
+        {countdown !== null && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/30 z-10 backdrop-blur-sm">
+            <span className="text-[180px] font-black text-white drop-shadow-[0_0_40px_rgba(255,255,255,0.4)] animate-pulse">
+              {countdown}
+            </span>
+          </div>
+        )}
+
+        {stream && !isComplete && countdown === null && (
           <div className="absolute top-6 left-6 flex items-center gap-3 px-4 py-2 bg-black/40 backdrop-blur-md rounded-full border border-white/20 shadow-xl">
             <div className="w-3 h-3 rounded-full bg-rose-500 animate-pulse" />
             <span className="text-sm font-bold text-white tracking-wider uppercase">Live</span>
