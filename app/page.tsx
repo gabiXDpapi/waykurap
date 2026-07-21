@@ -23,13 +23,13 @@ export default function Home() {
 
         {/* Video & Action Buttons Area */}
         <div className="w-full max-w-4xl flex flex-col items-center">
-          <CameraPreview 
-            videoRef={videoRef} 
-            stream={stream} 
-            error={error} 
-            photos={photos} 
-            isComplete={isComplete} 
-            countdown={countdown} 
+          <CameraPreview
+            videoRef={videoRef}
+            stream={stream}
+            error={error}
+            photos={photos}
+            isComplete={isComplete}
+            countdown={countdown}
             showFlash={showFlash}
           />
           <ActionButtons

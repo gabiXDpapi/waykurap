@@ -20,8 +20,8 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
         </div>
       )}
 
-      <div className="relative w-full aspect-video bg-zinc-900 rounded-[2rem] overflow-hidden shadow-2xl border border-zinc-200">
-        {!stream && !error && (
+      <div className={`relative w-full ${isComplete && photos.length > 0 ? 'bg-white p-4 pb-16 max-w-sm mx-auto shadow-2xl' : 'aspect-video bg-zinc-900 rounded-[2rem] overflow-hidden shadow-2xl border border-zinc-200'}`}>
+        {!stream && !error && !isComplete && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400 bg-zinc-50">
             <div className="w-10 h-10 mb-6 border-4 border-[#5B45FF]/30 border-t-[#5B45FF] rounded-full animate-spin" />
             <p className="text-lg font-medium text-zinc-600">Waiting for camera permission...</p>
@@ -30,9 +30,9 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
         )}
 
         {isComplete && photos.length > 0 ? (
-          <div className={`w-full h-full grid gap-2 p-2 ${photos.length === 1 ? 'grid-cols-1' : photos.length === 2 ? 'grid-cols-2' : 'grid-cols-2 lg:grid-cols-3'} bg-zinc-100`}>
+          <div className="w-full flex flex-col gap-4">
             {photos.map((p, i) => (
-              <img key={i} src={p} alt={`Captured ${i + 1}`} className="w-full h-full object-cover rounded-xl shadow-sm" />
+              <img key={i} src={p} alt={`Captured ${i + 1}`} className="w-full object-cover shadow-sm border border-black/5" />
             ))}
           </div>
         ) : (
