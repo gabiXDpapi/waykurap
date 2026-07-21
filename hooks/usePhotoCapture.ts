@@ -41,10 +41,10 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
         setCountdown(sec);
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
-      
+
       if (!isMounted.current) return;
       setCountdown(null);
-      
+
       const photo = captureSinglePhoto();
       if (photo) {
         setShowFlash(true);
@@ -109,7 +109,7 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     let currentY = padding;
     loadedImages.forEach((img) => {
       ctx.drawImage(img, padding, currentY, imgWidth, imgHeight);
-      
+
       // Draw subtle border around each photo (mimicking the CSS border-black/5)
       ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
       ctx.lineWidth = 2;

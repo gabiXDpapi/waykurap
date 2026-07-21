@@ -29,21 +29,21 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
           </div>
         )}
 
-        {isComplete && photos.length > 0 ? (
+        {isComplete && photos.length > 0 && (
           <div className="w-full flex flex-col gap-4">
             {photos.map((p, i) => (
               <img key={i} src={p} alt={`Captured ${i + 1}`} className="w-full object-cover shadow-sm border border-black/5" />
             ))}
           </div>
-        ) : (
-          <video
-            ref={videoRef}
-            autoPlay
-            playsInline
-            muted
-            className={`w-full h-full object-cover transition-opacity duration-1000 ${stream ? 'opacity-100' : 'opacity-0'}`}
-          />
         )}
+        
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          className={`w-full h-full object-cover transition-opacity duration-1000 ${stream ? 'opacity-100' : 'opacity-0'} ${isComplete && photos.length > 0 ? 'hidden' : 'block'}`}
+        />
 
         {/* Capture Flash Overlay */}
         <div className={`absolute inset-0 bg-white pointer-events-none transition-opacity duration-75 z-20 ${showFlash ? 'opacity-100' : 'opacity-0'}`} />
