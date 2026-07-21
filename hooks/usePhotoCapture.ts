@@ -69,15 +69,60 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     }
   };
 
-  const handleExportPhoto = () => {
-    if (photos.length > 0) {
-      photos.forEach((photo, index) => {
-        const a = document.createElement("a");
-        a.href = photo;
-        a.download = `photo-${Date.now()}-${index + 1}.png`;
-        a.click();
-      });
-    }
+  const handleExportPhoto = async () => {
+    if (photos.length === 0) return;
+
+    const padding = 24;
+    const paddingBottom = 80;
+    const gap = 16;
+
+    const loadedImages = await Promise.all(
+      photos.map((src) => {
+        return new Promise<HTMLImageElement>((resolve, reject) => {
+          const img = new Image();
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = src;
+        });
+      })
+    );
+
+    if (loadedImages.length === 0) return;
+
+    const imgWidth = loadedImages[0].width;
+    const imgHeight = loadedImages[0].height;
+
+    const canvasWidth = imgWidth + padding * 2;
+    const canvasHeight = padding + (imgHeight * loadedImages.length) + (gap * (loadedImages.length - 1)) + paddingBottom;
+
+    const canvas = document.createElement("canvas");
+    canvas.width = canvasWidth;
+    canvas.height = canvasHeight;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    // Draw white background for the strip
+    ctx.fillStyle = "#FFFFFF";
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+    // Draw each image onto the strip
+    let currentY = padding;
+    loadedImages.forEach((img) => {
+      ctx.drawImage(img, padding, currentY, imgWidth, imgHeight);
+      
+      // Draw subtle border around each photo (mimicking the CSS border-black/5)
+      ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(padding, currentY, imgWidth, imgHeight);
+
+      currentY += imgHeight + gap;
+    });
+
+    const dataUrl = canvas.toDataURL("image/png");
+    const a = document.createElement("a");
+    a.href = dataUrl;
+    a.download = `photobooth-strip-${Date.now()}.png`;
+    a.click();
   };
 
   const handleRetake = () => {
