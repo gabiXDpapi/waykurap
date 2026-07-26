@@ -9,9 +9,10 @@ interface CameraPreviewProps {
   countdown?: number | null;
   showFlash?: boolean;
   selectedFrame?: string;
+  isVertical?: boolean;
 }
 
-export function CameraPreview({ videoRef, stream, error, photos = [], isComplete = false, countdown = null, showFlash = false, selectedFrame = "Polaroid" }: CameraPreviewProps) {
+export function CameraPreview({ videoRef, stream, error, photos = [], isComplete = false, countdown = null, showFlash = false, selectedFrame = "Polaroid", isVertical = true }: CameraPreviewProps) {
   const isFilmStrip = selectedFrame === "Film Strip";
   const isPolaroid = selectedFrame === "Polaroid";
 
@@ -20,7 +21,7 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
     if (isFilmStrip) {
       containerClasses = 'bg-[#0f0f0f] py-8 px-10 max-w-sm mx-auto shadow-2xl relative';
     } else if (isPolaroid) {
-      containerClasses = 'bg-[#8B7355] py-12 px-8 max-w-md mx-auto shadow-2xl relative overflow-hidden';
+      containerClasses = 'bg-transparent py-4 w-full relative';
     } else {
       containerClasses = 'bg-white p-4 pb-16 max-w-sm mx-auto shadow-2xl relative';
     }
@@ -59,30 +60,25 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
             )}
             
             {isPolaroid && (
-              <div className="w-full flex flex-col items-center relative py-4">
+              <div className={`w-full flex ${isVertical ? 'flex-col items-center' : 'flex-row justify-center'} py-8 px-4`}>
                 {photos.map((p, i) => {
                   const polaroidRotations = [-6, 4, -3, 5, -5, 3];
-                  const polaroidTranslations = [-10, 10, -5, 15, -10, 8];
+                  const polaroidShifts = [-10, 10, -5, 15, -10, 8];
                   const rot = polaroidRotations[i % polaroidRotations.length];
-                  const transX = polaroidTranslations[i % polaroidTranslations.length];
+                  const shift = polaroidShifts[i % polaroidShifts.length];
                   
                   return (
                     <div 
                       key={i} 
-                      className="bg-white p-3 pb-12 shadow-2xl border border-black/5 transition-transform hover:scale-[1.02] hover:z-50 relative cursor-pointer"
+                      className="bg-white p-3 pb-8 shadow-2xl border border-black/5 transition-transform hover:scale-[1.05] hover:z-50 relative cursor-pointer w-64 shrink-0"
                       style={{ 
-                        transform: `rotate(${rot}deg) translateX(${transX}px)`,
-                        marginTop: i === 0 ? '0' : '-60px',
+                        transform: `rotate(${rot}deg) ${isVertical ? `translateX(${shift}px)` : `translateY(${shift}px)`}`,
+                        marginTop: isVertical && i !== 0 ? '-60px' : '0',
+                        marginLeft: !isVertical && i !== 0 ? '-60px' : '0',
                         zIndex: i
                       }}
                     >
                       <img src={p} alt={`Captured ${i + 1}`} className="w-full aspect-square object-cover" />
-                      <p 
-                        className="text-center text-slate-700 mt-4 text-xl tracking-wide"
-                        style={{ fontFamily: "'Caveat', 'Comic Sans MS', cursive" }}
-                      >
-                        Your Text Here
-                      </p>
                     </div>
                   );
                 })}
