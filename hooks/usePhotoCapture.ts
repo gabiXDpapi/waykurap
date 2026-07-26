@@ -69,12 +69,10 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     }
   };
 
-  const handleExportPhoto = async () => {
+  const handleExportPhoto = async (selectedFrame: string = "Polaroid") => {
     if (photos.length === 0) return;
 
-    const padding = 24;
-    const paddingBottom = 80;
-    const gap = 16;
+    const isFilmStrip = selectedFrame === "Film Strip";
 
     const loadedImages = await Promise.all(
       photos.map((src) => {
@@ -92,8 +90,17 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     const imgWidth = loadedImages[0].width;
     const imgHeight = loadedImages[0].height;
 
-    const canvasWidth = imgWidth + padding * 2;
-    const canvasHeight = padding + (imgHeight * loadedImages.length) + (gap * (loadedImages.length - 1)) + paddingBottom;
+    // The preview is roughly 400px wide. Use a scaling factor to keep proportions identical.
+    const scale = imgWidth / 400;
+
+    // Values match CameraPreview.tsx exactly (px-10/py-8 for film, p-4/pb-16 for polaroid)
+    const paddingX = (isFilmStrip ? 40 : 16) * scale;
+    const paddingY = (isFilmStrip ? 32 : 16) * scale;
+    const paddingBottom = (isFilmStrip ? 32 : 64) * scale;
+    const gap = (isFilmStrip ? 24 : 16) * scale;
+
+    const canvasWidth = imgWidth + paddingX * 2;
+    const canvasHeight = paddingY + (imgHeight * loadedImages.length) + (gap * (loadedImages.length - 1)) + paddingBottom;
 
     const canvas = document.createElement("canvas");
     canvas.width = canvasWidth;
@@ -101,19 +108,47 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Draw white background for the strip
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    if (isFilmStrip) {
+      // Draw black background for film strip
+      ctx.fillStyle = "#0f0f0f";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      
+      // Draw sprocket holes
+      ctx.fillStyle = "#e5e5e5";
+      const holeWidth = 12 * scale;
+      const holeHeight = 12 * scale;
+      const holeSpacing = 24 * scale;
+      const leftHoleX = 12 * scale;
+      const rightHoleX = canvasWidth - 12 * scale - holeWidth;
+      const borderRadius = 2 * scale;
+      
+      for (let y = 12 * scale; y < canvasHeight - (12 * scale); y += holeSpacing) {
+        // Simple rounded rect approximation for holes
+        ctx.beginPath();
+        ctx.roundRect(leftHoleX, y, holeWidth, holeHeight, borderRadius);
+        ctx.fill();
+        
+        ctx.beginPath();
+        ctx.roundRect(rightHoleX, y, holeWidth, holeHeight, borderRadius);
+        ctx.fill();
+      }
+    } else {
+      // Draw white background for Polaroid
+      ctx.fillStyle = "#FFFFFF";
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    }
 
     // Draw each image onto the strip
-    let currentY = padding;
+    let currentY = paddingY;
     loadedImages.forEach((img) => {
-      ctx.drawImage(img, padding, currentY, imgWidth, imgHeight);
+      ctx.drawImage(img, paddingX, currentY, imgWidth, imgHeight);
 
-      // Draw subtle border around each photo (mimicking the CSS border-black/5)
-      ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(padding, currentY, imgWidth, imgHeight);
+      if (!isFilmStrip) {
+        // Draw subtle border around each photo for Polaroid
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
+        ctx.lineWidth = Math.max(1, 2 * scale);
+        ctx.strokeRect(paddingX, currentY, imgWidth, imgHeight);
+      }
 
       currentY += imgHeight + gap;
     });
