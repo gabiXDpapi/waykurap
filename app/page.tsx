@@ -49,23 +49,30 @@ export default function Home() {
             </button>
           )}
 
-          <ActionButtons
-            onTakePhoto={() => handleTakePhoto(photoCount)}
-            onExportPhoto={() => handleExportPhoto(selectedFrame, isVertical)}
-            onRetake={handleRetake}
-            isComplete={isComplete}
-            isCapturing={isCapturing}
-          />
+          {!isComplete && (
+            <ActionButtons
+              onTakePhoto={() => handleTakePhoto(photoCount)}
+              isComplete={false}
+              isCapturing={isCapturing}
+            />
+          )}
         </div>
 
         {/* Sidebar UI (Options) */}
-        <div className="flex flex-col gap-6 w-full xl:w-auto items-center xl:items-start">
+        <div className="flex flex-col gap-6 w-full xl:w-auto items-center xl:items-start xl:sticky xl:top-24 self-start z-10 transition-transform">
           {isComplete ? (
-            <FrameSelector
-              frames={FRAMES}
-              selectedFrame={selectedFrame}
-              onSelectFrame={setSelectedFrame}
-            />
+            <div className="flex flex-col gap-4 w-full">
+              <FrameSelector
+                frames={FRAMES}
+                selectedFrame={selectedFrame}
+                onSelectFrame={setSelectedFrame}
+              />
+              <ActionButtons
+                onExportPhoto={() => handleExportPhoto(selectedFrame, isVertical)}
+                onRetake={handleRetake}
+                isComplete={true}
+              />
+            </div>
           ) : (
             <PhotoCountSelector
               counts={PHOTO_COUNTS}
