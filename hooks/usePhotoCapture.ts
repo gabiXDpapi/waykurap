@@ -73,6 +73,7 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     if (photos.length === 0) return;
 
     const isFilmStrip = selectedFrame === "Film Strip";
+    const isPolaroid = selectedFrame === "Polaroid";
 
     const loadedImages = await Promise.all(
       photos.map((src) => {
@@ -89,69 +90,142 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
 
     const imgWidth = loadedImages[0].width;
     const imgHeight = loadedImages[0].height;
-
-    // The preview is roughly 400px wide. Use a scaling factor to keep proportions identical.
     const scale = imgWidth / 400;
 
-    // Values match CameraPreview.tsx exactly (px-10/py-8 for film, p-4/pb-16 for polaroid)
-    const paddingX = (isFilmStrip ? 40 : 16) * scale;
-    const paddingY = (isFilmStrip ? 32 : 16) * scale;
-    const paddingBottom = (isFilmStrip ? 32 : 64) * scale;
-    const gap = (isFilmStrip ? 24 : 16) * scale;
-
-    const canvasWidth = imgWidth + paddingX * 2;
-    const canvasHeight = paddingY + (imgHeight * loadedImages.length) + (gap * (loadedImages.length - 1)) + paddingBottom;
-
+    let canvasWidth, canvasHeight;
     const canvas = document.createElement("canvas");
-    canvas.width = canvasWidth;
-    canvas.height = canvasHeight;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
 
-    if (isFilmStrip) {
-      // Draw black background for film strip
-      ctx.fillStyle = "#0f0f0f";
+    if (isPolaroid) {
+      // 1. Calculate Polaroid Dimensions
+      const pPadX = 12 * scale;
+      const pPadTop = 12 * scale;
+      const pPadBottom = 48 * scale;
+      const cardWidth = imgWidth + pPadX * 2;
+      const cardHeight = imgHeight + pPadTop + pPadBottom;
+      
+      const paddingY = 48 * scale; // py-12
+      const paddingX = 32 * scale; // px-8
+      const overlap = -60 * scale;
+
+      canvasWidth = cardWidth + paddingX * 2;
+      // Account for overlaps and padding
+      canvasHeight = paddingY * 2 + cardHeight + (cardHeight + overlap) * (loadedImages.length - 1);
+      
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      // Draw background
+      ctx.fillStyle = "#8B7355";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-      
-      // Draw sprocket holes
-      ctx.fillStyle = "#e5e5e5";
-      const holeWidth = 12 * scale;
-      const holeHeight = 12 * scale;
-      const holeSpacing = 24 * scale;
-      const leftHoleX = 12 * scale;
-      const rightHoleX = canvasWidth - 12 * scale - holeWidth;
-      const borderRadius = 2 * scale;
-      
-      for (let y = 12 * scale; y < canvasHeight - (12 * scale); y += holeSpacing) {
-        // Simple rounded rect approximation for holes
-        ctx.beginPath();
-        ctx.roundRect(leftHoleX, y, holeWidth, holeHeight, borderRadius);
-        ctx.fill();
+
+      const polaroidRotations = [-6, 4, -3, 5, -5, 3];
+      const polaroidTranslations = [-10, 10, -5, 15, -10, 8];
+
+      let currentY = paddingY;
+
+      loadedImages.forEach((img, i) => {
+        ctx.save();
         
-        ctx.beginPath();
-        ctx.roundRect(rightHoleX, y, holeWidth, holeHeight, borderRadius);
-        ctx.fill();
-      }
-    } else {
-      // Draw white background for Polaroid
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-    }
+        const rot = polaroidRotations[i % polaroidRotations.length] * Math.PI / 180;
+        const transX = polaroidTranslations[i % polaroidTranslations.length] * scale;
+        
+        if (i > 0) currentY += overlap;
+        
+        const cx = canvasWidth / 2 + transX;
+        const cy = currentY + cardHeight / 2;
+        
+        ctx.translate(cx, cy);
+        ctx.rotate(rot);
 
-    // Draw each image onto the strip
-    let currentY = paddingY;
-    loadedImages.forEach((img) => {
-      ctx.drawImage(img, paddingX, currentY, imgWidth, imgHeight);
+        // Draw shadow
+        ctx.shadowColor = "rgba(0,0,0,0.25)";
+        ctx.shadowBlur = 25 * scale;
+        ctx.shadowOffsetY = 15 * scale;
+        
+        // Draw white card
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight);
+        
+        ctx.shadowColor = "transparent";
 
-      if (!isFilmStrip) {
-        // Draw subtle border around each photo for Polaroid
-        ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
+        // Draw image
+        const imgX = -cardWidth / 2 + pPadX;
+        const imgY = -cardHeight / 2 + pPadTop;
+        ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
+
+        // Draw border
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.04)";
         ctx.lineWidth = Math.max(1, 2 * scale);
-        ctx.strokeRect(paddingX, currentY, imgWidth, imgHeight);
+        ctx.strokeRect(imgX, imgY, imgWidth, imgHeight);
+
+        // Draw text
+        const fontSize = Math.floor(20 * scale);
+        ctx.font = `italic ${fontSize}px "Comic Sans MS", serif`;
+        ctx.fillStyle = "#334155";
+        ctx.textAlign = "center";
+        ctx.fillText("Your Text Here", 0, cardHeight / 2 - (pPadBottom / 2) + (fontSize / 3));
+
+        ctx.restore();
+        
+        currentY += cardHeight;
+      });
+
+    } else {
+      // Film Strip or default layout
+      const paddingX = (isFilmStrip ? 40 : 16) * scale;
+      const paddingY = (isFilmStrip ? 32 : 16) * scale;
+      const paddingBottom = (isFilmStrip ? 32 : 64) * scale;
+      const gap = (isFilmStrip ? 24 : 16) * scale;
+
+      canvasWidth = imgWidth + paddingX * 2;
+      canvasHeight = paddingY + (imgHeight * loadedImages.length) + (gap * (loadedImages.length - 1)) + paddingBottom;
+      
+      canvas.width = canvasWidth;
+      canvas.height = canvasHeight;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      if (isFilmStrip) {
+        ctx.fillStyle = "#0f0f0f";
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+        
+        ctx.fillStyle = "#e5e5e5";
+        const holeWidth = 12 * scale;
+        const holeHeight = 12 * scale;
+        const holeSpacing = 24 * scale;
+        const leftHoleX = 12 * scale;
+        const rightHoleX = canvasWidth - 12 * scale - holeWidth;
+        const borderRadius = 2 * scale;
+        
+        for (let y = 12 * scale; y < canvasHeight - (12 * scale); y += holeSpacing) {
+          ctx.beginPath();
+          ctx.roundRect(leftHoleX, y, holeWidth, holeHeight, borderRadius);
+          ctx.fill();
+          
+          ctx.beginPath();
+          ctx.roundRect(rightHoleX, y, holeWidth, holeHeight, borderRadius);
+          ctx.fill();
+        }
+      } else {
+        ctx.fillStyle = "#FFFFFF";
+        ctx.fillRect(0, 0, canvasWidth, canvasHeight);
       }
 
-      currentY += imgHeight + gap;
-    });
+      let currentY = paddingY;
+      loadedImages.forEach((img) => {
+        ctx.drawImage(img, paddingX, currentY, imgWidth, imgHeight);
+
+        if (!isFilmStrip) {
+          ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
+          ctx.lineWidth = Math.max(1, 2 * scale);
+          ctx.strokeRect(paddingX, currentY, imgWidth, imgHeight);
+        }
+
+        currentY += imgHeight + gap;
+      });
+    }
 
     const dataUrl = canvas.toDataURL("image/png");
     const a = document.createElement("a");
