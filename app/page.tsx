@@ -31,10 +31,11 @@ export default function Home() {
             isComplete={isComplete}
             countdown={countdown}
             showFlash={showFlash}
+            selectedFrame={selectedFrame}
           />
           <ActionButtons
             onTakePhoto={() => handleTakePhoto(photoCount)}
-            onExportPhoto={handleExportPhoto}
+            onExportPhoto={() => handleExportPhoto(selectedFrame)}
             onRetake={handleRetake}
             isComplete={isComplete}
             isCapturing={isCapturing}
