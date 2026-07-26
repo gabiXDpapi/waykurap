@@ -69,7 +69,7 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     }
   };
 
-  const handleExportPhoto = async (selectedFrame: string = "Polaroid") => {
+  const handleExportPhoto = async (selectedFrame: string = "Polaroid", isVertical: boolean = true) => {
     if (photos.length === 0) return;
 
     const isFilmStrip = selectedFrame === "Film Strip";
@@ -96,53 +96,62 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     const canvas = document.createElement("canvas");
 
     if (isPolaroid) {
-      // 1. Calculate Polaroid Dimensions
       const pPadX = 12 * scale;
       const pPadTop = 12 * scale;
-      const pPadBottom = 48 * scale;
+      const pPadBottom = 32 * scale;
       const cardWidth = imgWidth + pPadX * 2;
       const cardHeight = imgHeight + pPadTop + pPadBottom;
       
-      const paddingY = 48 * scale; // py-12
-      const paddingX = 32 * scale; // px-8
+      const padding = 64 * scale;
       const overlap = -60 * scale;
 
-      canvasWidth = cardWidth + paddingX * 2;
-      // Account for overlaps and padding
-      canvasHeight = paddingY * 2 + cardHeight + (cardHeight + overlap) * (loadedImages.length - 1);
+      if (isVertical) {
+        canvasWidth = cardWidth + padding * 2;
+        canvasHeight = padding * 2 + cardHeight + (cardHeight + overlap) * (loadedImages.length - 1);
+      } else {
+        canvasWidth = padding * 2 + cardWidth + (cardWidth + overlap) * (loadedImages.length - 1);
+        canvasHeight = cardHeight + padding * 2;
+      }
       
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
 
-      // Draw background
-      ctx.fillStyle = "#8B7355";
+      // Draw white background
+      ctx.fillStyle = "#FFFFFF";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
       const polaroidRotations = [-6, 4, -3, 5, -5, 3];
-      const polaroidTranslations = [-10, 10, -5, 15, -10, 8];
+      const polaroidShifts = [-10, 10, -5, 15, -10, 8];
 
-      let currentY = paddingY;
+      let currentX = padding;
+      let currentY = padding;
 
       loadedImages.forEach((img, i) => {
         ctx.save();
         
         const rot = polaroidRotations[i % polaroidRotations.length] * Math.PI / 180;
-        const transX = polaroidTranslations[i % polaroidTranslations.length] * scale;
+        const shift = polaroidShifts[i % polaroidShifts.length] * scale;
+
+        if (i > 0) {
+          if (isVertical) {
+            currentY += cardHeight + overlap;
+          } else {
+            currentX += cardWidth + overlap;
+          }
+        }
         
-        if (i > 0) currentY += overlap;
-        
-        const cx = canvasWidth / 2 + transX;
-        const cy = currentY + cardHeight / 2;
+        const cx = currentX + cardWidth / 2 + (isVertical ? shift : 0);
+        const cy = currentY + cardHeight / 2 + (!isVertical ? shift : 0);
         
         ctx.translate(cx, cy);
         ctx.rotate(rot);
-
+        
         // Draw shadow
-        ctx.shadowColor = "rgba(0,0,0,0.25)";
-        ctx.shadowBlur = 25 * scale;
-        ctx.shadowOffsetY = 15 * scale;
+        ctx.shadowColor = "rgba(0,0,0,0.15)";
+        ctx.shadowBlur = 20 * scale;
+        ctx.shadowOffsetY = 10 * scale;
         
         // Draw white card
         ctx.fillStyle = "#FFFFFF";
@@ -155,21 +164,12 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
         const imgY = -cardHeight / 2 + pPadTop;
         ctx.drawImage(img, imgX, imgY, imgWidth, imgHeight);
 
-        // Draw border
-        ctx.strokeStyle = "rgba(0, 0, 0, 0.04)";
+        // Draw subtle border around card
+        ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
         ctx.lineWidth = Math.max(1, 2 * scale);
-        ctx.strokeRect(imgX, imgY, imgWidth, imgHeight);
-
-        // Draw text
-        const fontSize = Math.floor(20 * scale);
-        ctx.font = `italic ${fontSize}px "Comic Sans MS", serif`;
-        ctx.fillStyle = "#334155";
-        ctx.textAlign = "center";
-        ctx.fillText("Your Text Here", 0, cardHeight / 2 - (pPadBottom / 2) + (fontSize / 3));
+        ctx.strokeRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight);
 
         ctx.restore();
-        
-        currentY += cardHeight;
       });
 
     } else {
