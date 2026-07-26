@@ -15,6 +15,7 @@ export default function Home() {
   const [selectedFrame, setSelectedFrame] = useState(FRAMES[1]); // Default to Polaroid
   const [photoCount, setPhotoCount] = useState(PHOTO_COUNTS[0]); // Default to 3
 
+  const [isVertical, setIsVertical] = useState(true);
   const isComplete = photos.length >= photoCount;
 
   return (
@@ -32,10 +33,25 @@ export default function Home() {
             countdown={countdown}
             showFlash={showFlash}
             selectedFrame={selectedFrame}
+            isVertical={isVertical}
           />
+          
+          {isComplete && selectedFrame === "Polaroid" && (
+            <button
+              onClick={() => setIsVertical(!isVertical)}
+              className="mt-6 flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 rounded-full font-medium hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-300 ${isVertical ? 'rotate-90' : 'rotate-0'}`}>
+                <path d="M3 12h18" />
+                <path d="M14 5l7 7-7 7" />
+              </svg>
+              {isVertical ? 'Change to Horizontal' : 'Change to Vertical'}
+            </button>
+          )}
+
           <ActionButtons
             onTakePhoto={() => handleTakePhoto(photoCount)}
-            onExportPhoto={() => handleExportPhoto(selectedFrame)}
+            onExportPhoto={() => handleExportPhoto(selectedFrame, isVertical)}
             onRetake={handleRetake}
             isComplete={isComplete}
             isCapturing={isCapturing}
