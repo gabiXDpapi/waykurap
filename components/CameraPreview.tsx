@@ -13,6 +13,18 @@ interface CameraPreviewProps {
 
 export function CameraPreview({ videoRef, stream, error, photos = [], isComplete = false, countdown = null, showFlash = false, selectedFrame = "Polaroid" }: CameraPreviewProps) {
   const isFilmStrip = selectedFrame === "Film Strip";
+  const isPolaroid = selectedFrame === "Polaroid";
+
+  let containerClasses = 'aspect-video bg-zinc-900 rounded-[2rem] overflow-hidden shadow-2xl border border-zinc-200';
+  if (isComplete && photos.length > 0) {
+    if (isFilmStrip) {
+      containerClasses = 'bg-[#0f0f0f] py-8 px-10 max-w-sm mx-auto shadow-2xl relative';
+    } else if (isPolaroid) {
+      containerClasses = 'bg-[#8B7355] py-12 px-8 max-w-md mx-auto shadow-2xl relative overflow-hidden';
+    } else {
+      containerClasses = 'bg-white p-4 pb-16 max-w-sm mx-auto shadow-2xl relative';
+    }
+  }
 
   return (
     <div className="w-full max-w-4xl flex flex-col items-center gap-8">
@@ -23,7 +35,7 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
         </div>
       )}
 
-      <div className={`relative w-full ${isComplete && photos.length > 0 ? (isFilmStrip ? 'bg-[#0f0f0f] py-8 px-10 max-w-sm mx-auto shadow-2xl relative' : 'bg-white p-4 pb-16 max-w-sm mx-auto shadow-2xl') : 'aspect-video bg-zinc-900 rounded-[2rem] overflow-hidden shadow-2xl border border-zinc-200'}`}>
+      <div className={`relative w-full ${containerClasses}`}>
         {!stream && !error && !isComplete && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400 bg-zinc-50">
             <div className="w-10 h-10 mb-6 border-4 border-[#5B45FF]/30 border-t-[#5B45FF] rounded-full animate-spin" />
@@ -38,13 +50,52 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
               <>
                 <div className="absolute left-3 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(to_bottom,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
                 <div className="absolute right-3 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(to_bottom,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
+                <div className="w-full flex flex-col gap-6">
+                  {photos.map((p, i) => (
+                    <img key={i} src={p} alt={`Captured ${i + 1}`} className="w-full object-cover shadow-sm" />
+                  ))}
+                </div>
               </>
             )}
-            <div className={`w-full flex flex-col ${isFilmStrip ? 'gap-6' : 'gap-4'}`}>
-              {photos.map((p, i) => (
-                <img key={i} src={p} alt={`Captured ${i + 1}`} className={`w-full object-cover shadow-sm ${isFilmStrip ? '' : 'border border-black/5'}`} />
-              ))}
-            </div>
+            
+            {isPolaroid && (
+              <div className="w-full flex flex-col items-center relative py-4">
+                {photos.map((p, i) => {
+                  const polaroidRotations = [-6, 4, -3, 5, -5, 3];
+                  const polaroidTranslations = [-10, 10, -5, 15, -10, 8];
+                  const rot = polaroidRotations[i % polaroidRotations.length];
+                  const transX = polaroidTranslations[i % polaroidTranslations.length];
+                  
+                  return (
+                    <div 
+                      key={i} 
+                      className="bg-white p-3 pb-12 shadow-2xl border border-black/5 transition-transform hover:scale-[1.02] hover:z-50 relative cursor-pointer"
+                      style={{ 
+                        transform: `rotate(${rot}deg) translateX(${transX}px)`,
+                        marginTop: i === 0 ? '0' : '-60px',
+                        zIndex: i
+                      }}
+                    >
+                      <img src={p} alt={`Captured ${i + 1}`} className="w-full aspect-square object-cover" />
+                      <p 
+                        className="text-center text-slate-700 mt-4 text-xl tracking-wide"
+                        style={{ fontFamily: "'Caveat', 'Comic Sans MS', cursive" }}
+                      >
+                        Your Text Here
+                      </p>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {!isFilmStrip && !isPolaroid && (
+              <div className="w-full flex flex-col gap-4">
+                {photos.map((p, i) => (
+                  <img key={i} src={p} alt={`Captured ${i + 1}`} className="w-full object-cover shadow-sm border border-black/5" />
+                ))}
+              </div>
+            )}
           </>
         )}
         
