@@ -19,7 +19,7 @@ export default function Home() {
   const isComplete = photos.length >= photoCount;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-[#F8FAFC] font-sans p-6 md:p-12">
+    <div className="flex items-start justify-center min-h-screen bg-[#F8FAFC] font-sans p-6 md:p-12 md:pt-24">
       <div className="flex flex-col xl:flex-row items-center xl:items-start justify-center w-full max-w-7xl gap-8">
 
         {/* Video & Action Buttons Area */}
@@ -35,7 +35,7 @@ export default function Home() {
             selectedFrame={selectedFrame}
             isVertical={isVertical}
           />
-          
+
           {isComplete && selectedFrame === "Polaroid" && (
             <button
               onClick={() => setIsVertical(!isVertical)}
