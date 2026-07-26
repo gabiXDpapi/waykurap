@@ -8,9 +8,12 @@ interface CameraPreviewProps {
   isComplete?: boolean;
   countdown?: number | null;
   showFlash?: boolean;
+  selectedFrame?: string;
 }
 
-export function CameraPreview({ videoRef, stream, error, photos = [], isComplete = false, countdown = null, showFlash = false }: CameraPreviewProps) {
+export function CameraPreview({ videoRef, stream, error, photos = [], isComplete = false, countdown = null, showFlash = false, selectedFrame = "Polaroid" }: CameraPreviewProps) {
+  const isFilmStrip = selectedFrame === "Film Strip";
+
   return (
     <div className="w-full max-w-4xl flex flex-col items-center gap-8">
       {error && (
@@ -20,7 +23,7 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
         </div>
       )}
 
-      <div className={`relative w-full ${isComplete && photos.length > 0 ? 'bg-white p-4 pb-16 max-w-sm mx-auto shadow-2xl' : 'aspect-video bg-zinc-900 rounded-[2rem] overflow-hidden shadow-2xl border border-zinc-200'}`}>
+      <div className={`relative w-full ${isComplete && photos.length > 0 ? (isFilmStrip ? 'bg-[#0f0f0f] py-8 px-10 max-w-sm mx-auto shadow-2xl relative' : 'bg-white p-4 pb-16 max-w-sm mx-auto shadow-2xl') : 'aspect-video bg-zinc-900 rounded-[2rem] overflow-hidden shadow-2xl border border-zinc-200'}`}>
         {!stream && !error && !isComplete && (
           <div className="absolute inset-0 flex flex-col items-center justify-center text-zinc-400 bg-zinc-50">
             <div className="w-10 h-10 mb-6 border-4 border-[#5B45FF]/30 border-t-[#5B45FF] rounded-full animate-spin" />
@@ -30,11 +33,19 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
         )}
 
         {isComplete && photos.length > 0 && (
-          <div className="w-full flex flex-col gap-4">
-            {photos.map((p, i) => (
-              <img key={i} src={p} alt={`Captured ${i + 1}`} className="w-full object-cover shadow-sm border border-black/5" />
-            ))}
-          </div>
+          <>
+            {isFilmStrip && (
+              <>
+                <div className="absolute left-3 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(to_bottom,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
+                <div className="absolute right-3 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(to_bottom,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
+              </>
+            )}
+            <div className={`w-full flex flex-col ${isFilmStrip ? 'gap-6' : 'gap-4'}`}>
+              {photos.map((p, i) => (
+                <img key={i} src={p} alt={`Captured ${i + 1}`} className={`w-full object-cover shadow-sm ${isFilmStrip ? '' : 'border border-black/5'}`} />
+              ))}
+            </div>
+          </>
         )}
         
         <video
