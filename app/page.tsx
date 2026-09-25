@@ -31,7 +31,7 @@ export default function Home() {
       <div className="flex flex-col xl:flex-row items-center xl:items-start justify-center w-full max-w-7xl gap-8">
 
         {/* Video & Action Buttons Area */}
-        <div className="w-full max-w-4xl flex flex-col items-center">
+        <div className="w-full max-w-4xl flex flex-col items-center justify-center min-h-[calc(100vh-12rem)] transition-all duration-300">
           <CameraPreview
             videoRef={videoRef}
             stream={stream}
