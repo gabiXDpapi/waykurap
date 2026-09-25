@@ -21,13 +21,13 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
     if (isFilmStrip) {
       containerClasses = isVertical 
         ? 'bg-[#0f0f0f] py-8 px-10 max-w-sm mx-auto shadow-2xl relative'
-        : 'bg-[#0f0f0f] py-10 px-8 w-full max-w-full overflow-x-auto shadow-2xl relative';
+        : 'bg-[#0f0f0f] py-8 md:py-10 px-4 md:px-8 w-full shadow-2xl relative flex items-center justify-center';
     } else if (isPolaroid) {
       containerClasses = 'bg-transparent py-4 w-full relative';
     } else {
       containerClasses = isVertical
         ? 'bg-white p-4 pb-16 max-w-sm mx-auto shadow-2xl relative'
-        : 'bg-white p-4 pr-16 w-full max-w-full overflow-x-auto shadow-2xl relative flex items-center';
+        : 'bg-white p-4 pr-16 w-full shadow-2xl relative flex items-center';
     }
   }
 
@@ -64,15 +64,15 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
                     </div>
                   </>
                 ) : (
-                  <>
-                    <div className="absolute top-3 left-0 right-0 h-3 bg-[repeating-linear-gradient(to_right,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
-                    <div className="absolute bottom-3 left-0 right-0 h-3 bg-[repeating-linear-gradient(to_right,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
-                    <div className="flex flex-row gap-6 items-center min-w-max">
+                  <div className="w-full relative">
+                    <div className="absolute -top-5 md:-top-7 left-0 right-0 h-3 bg-[repeating-linear-gradient(to_right,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
+                    <div className="absolute -bottom-5 md:-bottom-7 left-0 right-0 h-3 bg-[repeating-linear-gradient(to_right,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
+                    <div className="flex flex-row gap-2 md:gap-4 w-full">
                       {photos.map((p, i) => (
-                        <img key={i} src={p} alt={`Captured ${i + 1}`} className="h-48 md:h-64 aspect-video object-cover shadow-sm" />
+                        <img key={i} src={p} alt={`Captured ${i + 1}`} className="flex-1 w-0 object-cover shadow-sm" />
                       ))}
                     </div>
-                  </>
+                  </div>
                 )}
               </>
             )}
