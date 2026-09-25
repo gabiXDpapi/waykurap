@@ -17,6 +17,13 @@ export default function Home() {
   const [photoCount, setPhotoCount] = useState(PHOTO_COUNTS[0]); // Default to 3
 
   const [isVertical, setIsVertical] = useState(true);
+
+  const handleSelectFrame = (frame: string) => {
+    setSelectedFrame(frame);
+    if (frame === "No Frame") {
+      setIsVertical(true);
+    }
+  };
   const isComplete = photos.length >= photoCount;
 
   return (
@@ -55,12 +62,14 @@ export default function Home() {
               <FrameSelector
                 frames={FRAMES}
                 selectedFrame={selectedFrame}
-                onSelectFrame={setSelectedFrame}
+                onSelectFrame={handleSelectFrame}
               />
-              <OrientationSelector
-                isVertical={isVertical}
-                onSelectOrientation={setIsVertical}
-              />
+              {selectedFrame !== "No Frame" && (
+                <OrientationSelector
+                  isVertical={isVertical}
+                  onSelectOrientation={setIsVertical}
+                />
+              )}
               <ActionButtons
                 onExportPhoto={() => handleExportPhoto(selectedFrame, isVertical)}
                 onRetake={handleRetake}
