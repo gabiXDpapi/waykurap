@@ -19,11 +19,15 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
   let containerClasses = 'aspect-video bg-zinc-900 rounded-[2rem] overflow-hidden shadow-2xl border border-zinc-200';
   if (isComplete && photos.length > 0) {
     if (isFilmStrip) {
-      containerClasses = 'bg-[#0f0f0f] py-8 px-10 max-w-sm mx-auto shadow-2xl relative';
+      containerClasses = isVertical 
+        ? 'bg-[#0f0f0f] py-8 px-10 max-w-sm mx-auto shadow-2xl relative'
+        : 'bg-[#0f0f0f] py-10 px-8 w-full max-w-full overflow-x-auto shadow-2xl relative';
     } else if (isPolaroid) {
       containerClasses = 'bg-transparent py-4 w-full relative';
     } else {
-      containerClasses = 'bg-white p-4 pb-16 max-w-sm mx-auto shadow-2xl relative';
+      containerClasses = isVertical
+        ? 'bg-white p-4 pb-16 max-w-sm mx-auto shadow-2xl relative'
+        : 'bg-white p-4 pr-16 w-full max-w-full overflow-x-auto shadow-2xl relative flex items-center';
     }
   }
 
@@ -49,13 +53,27 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
           <>
             {isFilmStrip && (
               <>
-                <div className="absolute left-3 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(to_bottom,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
-                <div className="absolute right-3 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(to_bottom,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
-                <div className="w-full flex flex-col gap-6">
-                  {photos.map((p, i) => (
-                    <img key={i} src={p} alt={`Captured ${i + 1}`} className="w-full object-cover shadow-sm" />
-                  ))}
-                </div>
+                {isVertical ? (
+                  <>
+                    <div className="absolute left-3 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(to_bottom,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
+                    <div className="absolute right-3 top-0 bottom-0 w-3 bg-[repeating-linear-gradient(to_bottom,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
+                    <div className="w-full flex flex-col gap-6">
+                      {photos.map((p, i) => (
+                        <img key={i} src={p} alt={`Captured ${i + 1}`} className="w-full object-cover shadow-sm" />
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="absolute top-3 left-0 right-0 h-3 bg-[repeating-linear-gradient(to_right,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
+                    <div className="absolute bottom-3 left-0 right-0 h-3 bg-[repeating-linear-gradient(to_right,transparent,transparent_12px,#e5e5e5_12px,#e5e5e5_24px)] opacity-90" />
+                    <div className="flex flex-row gap-6 items-center min-w-max">
+                      {photos.map((p, i) => (
+                        <img key={i} src={p} alt={`Captured ${i + 1}`} className="h-48 md:h-64 aspect-video object-cover shadow-sm" />
+                      ))}
+                    </div>
+                  </>
+                )}
               </>
             )}
             
@@ -86,9 +104,9 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
             )}
 
             {!isFilmStrip && !isPolaroid && (
-              <div className="w-full flex flex-col gap-4">
+              <div className={`flex ${isVertical ? 'flex-col w-full' : 'flex-row items-center min-w-max'} gap-4`}>
                 {photos.map((p, i) => (
-                  <img key={i} src={p} alt={`Captured ${i + 1}`} className="w-full object-cover shadow-sm border border-black/5" />
+                  <img key={i} src={p} alt={`Captured ${i + 1}`} className={`${isVertical ? 'w-full' : 'h-48 md:h-64 aspect-video'} object-cover shadow-sm border border-black/5`} />
                 ))}
               </div>
             )}

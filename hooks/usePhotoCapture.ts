@@ -174,13 +174,18 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
 
     } else {
       // Film Strip or default layout
-      const paddingX = (isFilmStrip ? 40 : 16) * scale;
-      const paddingY = (isFilmStrip ? 32 : 16) * scale;
-      const paddingBottom = (isFilmStrip ? 32 : 64) * scale;
+      const paddingX = (isFilmStrip ? (isVertical ? 40 : 24) : 16) * scale;
+      const paddingY = (isFilmStrip ? (isVertical ? 32 : 40) : 16) * scale;
+      const paddingBottom = (isFilmStrip ? (isVertical ? 32 : 40) : 64) * scale;
       const gap = (isFilmStrip ? 24 : 16) * scale;
 
-      canvasWidth = imgWidth + paddingX * 2;
-      canvasHeight = paddingY + (imgHeight * loadedImages.length) + (gap * (loadedImages.length - 1)) + paddingBottom;
+      if (isVertical) {
+         canvasWidth = imgWidth + paddingX * 2;
+         canvasHeight = paddingY + (imgHeight * loadedImages.length) + (gap * (loadedImages.length - 1)) + paddingBottom;
+      } else {
+         canvasWidth = paddingX * 2 + (imgWidth * loadedImages.length) + (gap * (loadedImages.length - 1));
+         canvasHeight = imgHeight + paddingY + paddingBottom;
+      }
       
       canvas.width = canvasWidth;
       canvas.height = canvasHeight;
@@ -195,35 +200,44 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
         const holeWidth = 12 * scale;
         const holeHeight = 12 * scale;
         const holeSpacing = 24 * scale;
-        const leftHoleX = 12 * scale;
-        const rightHoleX = canvasWidth - 12 * scale - holeWidth;
         const borderRadius = 2 * scale;
         
-        for (let y = 12 * scale; y < canvasHeight - (12 * scale); y += holeSpacing) {
-          ctx.beginPath();
-          ctx.roundRect(leftHoleX, y, holeWidth, holeHeight, borderRadius);
-          ctx.fill();
-          
-          ctx.beginPath();
-          ctx.roundRect(rightHoleX, y, holeWidth, holeHeight, borderRadius);
-          ctx.fill();
+        if (isVertical) {
+           const leftHoleX = 12 * scale;
+           const rightHoleX = canvasWidth - 12 * scale - holeWidth;
+           for (let y = 12 * scale; y < canvasHeight - (12 * scale); y += holeSpacing) {
+             ctx.beginPath(); ctx.roundRect(leftHoleX, y, holeWidth, holeHeight, borderRadius); ctx.fill();
+             ctx.beginPath(); ctx.roundRect(rightHoleX, y, holeWidth, holeHeight, borderRadius); ctx.fill();
+           }
+        } else {
+           const topHoleY = 12 * scale;
+           const bottomHoleY = canvasHeight - 12 * scale - holeHeight;
+           for (let x = 12 * scale; x < canvasWidth - (12 * scale); x += holeSpacing) {
+             ctx.beginPath(); ctx.roundRect(x, topHoleY, holeWidth, holeHeight, borderRadius); ctx.fill();
+             ctx.beginPath(); ctx.roundRect(x, bottomHoleY, holeWidth, holeHeight, borderRadius); ctx.fill();
+           }
         }
       } else {
         ctx.fillStyle = "#FFFFFF";
         ctx.fillRect(0, 0, canvasWidth, canvasHeight);
       }
 
+      let currentX = paddingX;
       let currentY = paddingY;
       loadedImages.forEach((img) => {
-        ctx.drawImage(img, paddingX, currentY, imgWidth, imgHeight);
+        ctx.drawImage(img, currentX, currentY, imgWidth, imgHeight);
 
         if (!isFilmStrip) {
           ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
           ctx.lineWidth = Math.max(1, 2 * scale);
-          ctx.strokeRect(paddingX, currentY, imgWidth, imgHeight);
+          ctx.strokeRect(currentX, currentY, imgWidth, imgHeight);
         }
 
-        currentY += imgHeight + gap;
+        if (isVertical) {
+           currentY += imgHeight + gap;
+        } else {
+           currentX += imgWidth + gap;
+        }
       });
     }
 
