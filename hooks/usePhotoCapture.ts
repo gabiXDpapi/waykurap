@@ -35,8 +35,8 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     const newPhotos: string[] = [];
 
     for (let i = 0; i < count; i++) {
-      // 5-second countdown
-      for (let sec = 5; sec > 0; sec--) {
+      const timerDuration = i === 0 ? 5 : 3;
+      for (let sec = timerDuration; sec > 0; sec--) {
         if (!isMounted.current) return;
         setCountdown(sec);
         await new Promise((resolve) => setTimeout(resolve, 1000));
