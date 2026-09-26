@@ -8,7 +8,7 @@ interface ActionButtonsProps {
 
 export function ActionButtons({ onTakePhoto, onExportPhoto, onRetake, isComplete, isCapturing }: ActionButtonsProps) {
   return (
-    <div className="w-full flex flex-col items-center justify-center gap-6 mt-8">
+    <div className={`w-full flex flex-col items-center justify-center gap-4 ${!isComplete ? 'mt-8' : ''}`}>
       {/* Main Take Photo Button */}
       {!isComplete && (
         <button
@@ -26,10 +26,10 @@ export function ActionButtons({ onTakePhoto, onExportPhoto, onRetake, isComplete
 
       {/* Secondary Actions */}
       {isComplete && (
-        <div className="w-full flex flex-col sm:flex-row items-center justify-center gap-4">
+        <div className="w-full flex flex-col items-center justify-center gap-3">
           <button
             onClick={onExportPhoto}
-            className="flex items-center justify-center gap-3 w-full sm:w-64 py-4 bg-white border border-[#E2E8F0] text-[#0F172A] rounded-2xl font-semibold text-[15px] shadow-sm hover:bg-slate-50 hover:border-slate-300 transition-all"
+            className="flex items-center justify-center gap-3 w-full py-4 bg-[#5B45FF] text-white rounded-xl font-semibold text-[15px] shadow-sm hover:bg-[#4E39E0] transition-all"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
@@ -41,7 +41,7 @@ export function ActionButtons({ onTakePhoto, onExportPhoto, onRetake, isComplete
 
           <button
             onClick={onRetake}
-            className="flex items-center justify-center gap-3 w-full sm:w-64 py-4 bg-white border border-[#E2E8F0] text-[#334155] rounded-2xl font-semibold text-[15px] hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
+            className="flex items-center justify-center gap-3 w-full py-4 bg-white border border-[#E2E8F0] text-[#334155] rounded-xl font-semibold text-[15px] hover:bg-slate-50 hover:border-slate-300 transition-all shadow-sm"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
