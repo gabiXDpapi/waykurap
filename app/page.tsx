@@ -33,10 +33,6 @@ export default function Page() {
             <h1>PHOTO BOOTH</h1>
           </div>
         </div>
-        <div className="top-actions">
-          <span className="status-dot" /> <span>Booth is ready</span>
-          <button className="icon-button" aria-label="Help"><CircleHelp size={19} /></button>
-        </div>
       </header>
 
       <div className="checker-rule" aria-hidden="true" />
@@ -46,7 +42,6 @@ export default function Page() {
           <div className="stage-heading">
             <div>
               <p className="kicker">{mode === 'capture' ? 'STEP 01 / CAPTURE' : 'STEP 02 / MAKE IT YOURS'}</p>
-              <h2>{mode === 'capture' ? "Y'all like photos?" : 'Pick your perfect look.'}</h2>
             </div>
             <div className="step-pills" aria-label="Photo booth progress">
               <span className={mode === 'capture' ? 'active' : 'done'}>{mode === 'capture' ? '1' : '✓'}</span>
@@ -57,10 +52,9 @@ export default function Page() {
 
           {mode === 'capture' ? (
             <div className="camera-card">
-              <div className="camera-topline"><span>CAM 01</span><span>4:3 / COLOR</span></div>
-              <div className="camera-view relative">
+              <div className="camera-view relative w-full max-w-[600px] mx-auto aspect-[4/3]">
                 <div className="corner corner-tl z-10" /><div className="corner corner-tr z-10" /><div className="corner corner-bl z-10" /><div className="corner corner-br z-10" />
-                
+
                 <video
                   ref={videoRef}
                   autoPlay
@@ -82,28 +76,32 @@ export default function Page() {
                 )}
 
                 <div className="absolute top-4 left-4 z-10">
-                   {stream && <div className="live-badge"><span /> LIVE</div>}
+                  {stream && <div className="live-badge"><span /> LIVE</div>}
                 </div>
 
                 {countdown !== null && (
                   <div className="countdown z-10">{countdown}</div>
                 )}
-                
-                <div className="view-controls"><span>●</span><span>FACE DETECTED</span><span>●</span></div>
+              </div>
+              <div className="mt-4 flex justify-center items-center">
+                <button
+                  onClick={() => handleTakePhoto(photoCount)}
+                  disabled={isCapturing || !stream}
+                  className="w-16 h-16 bg-[#ff3b30] rounded-full flex items-center justify-center text-white shadow-[0_2px_4px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.4)] border border-[#d63028] hover:bg-[#ff2d20] active:scale-95 transition-all disabled:opacity-50 disabled:active:scale-100"
+                  aria-label="Take Photo"
+                >
+                  <Camera size={28} fill="currentColor" strokeWidth={1} />
+                </button>
               </div>
             </div>
           ) : (
             <div className={`review-card ${isVertical ? 'vertical' : 'horizontal'}`}>
-              <div className="review-topline"><span>YOUR PHOTO STRIP</span><span>{photoCount} MOMENTS</span></div>
               <div className={`photo-layout ${selectedFrame.toLowerCase().replace(' ', '-')}`}>
                 {photos.slice(0, Math.min(photoCount, 3)).map((photo, index) => <img key={index} src={photo} alt={`Captured photobooth moment ${index + 1}`} />)}
                 {photoCount > 3 && <div className="photo-placeholder">+{photoCount - 3}</div>}
               </div>
-              <div className="review-sticker"><Star size={14} fill="currentColor" /> LOOKS GOOD!</div>
             </div>
           )}
-
-          <div className="tip-line"><Sparkles size={16} /> <span>{mode === 'capture' ? 'Good lighting makes good memories.' : 'Every photo tells a little story.'}</span></div>
         </div>
 
         <aside className="control-panel">
@@ -111,26 +109,22 @@ export default function Page() {
           {mode === 'capture' ? (
             <>
               <div className="panel-section">
-                <div className="section-label"><span>HOW MANY PHOTOS?</span><span className="help-dot">?</span></div>
+                <div className="section-label"><span>HOW MANY PHOTOS?</span></div>
                 <div className="count-grid">{PHOTO_COUNTS.map(option => <button key={option} className={photoCount === option ? 'count-option selected' : 'count-option'} onClick={() => setPhotoCount(option)}><strong>{option}</strong><span>photos</span>{photoCount === option && <Check size={15} />}</button>)}</div>
               </div>
               <div className="panel-divider" />
-              <div className="panel-section prompt-section"><p className="script-note">Smile big.<br />The booth is watching.</p><div className="dotted-arrow"><ArrowDown size={19} /><span>READY WHEN<br />YOU ARE</span></div></div>
-              <button className="primary-button" onClick={() => handleTakePhoto(photoCount)} disabled={isCapturing || !stream}>{isCapturing ? 'SAY CHEESE!' : 'STEP INSIDE'} <ArrowRight size={21} /></button>
             </>
           ) : (
             <>
-              <div className="panel-section"><div className="section-label"><span>CHOOSE A FRAME</span><span className="help-dot">?</span></div><div className="frame-list">{frames.map(item => <button key={item.name} className={selectedFrame === item.name ? 'frame-option selected' : 'frame-option'} onClick={() => setSelectedFrame(item.name)}><span className="frame-icon">{item.icon}</span><span><strong>{item.name}</strong><small>{item.detail}</small></span>{selectedFrame === item.name && <Check size={17} />}</button>)}</div></div>
+              <div className="panel-section"><div className="section-label"><span>CHOOSE A FRAME</span></div><div className="frame-list">{frames.map(item => <button key={item.name} className={selectedFrame === item.name ? 'frame-option selected' : 'frame-option'} onClick={() => setSelectedFrame(item.name)}><span className="frame-icon">{item.icon}</span><span><strong>{item.name}</strong><small>{item.detail}</small></span>{selectedFrame === item.name && <Check size={17} />}</button>)}</div></div>
               <div className="panel-divider" />
               <div className="panel-section"><div className="section-label"><span>ORIENTATION</span></div><div className="orientation-toggle"><button className={isVertical ? 'selected' : ''} onClick={() => setIsVertical(true)}>VERTICAL</button><button className={!isVertical ? 'selected' : ''} onClick={() => setIsVertical(false)}>HORIZONTAL</button></div></div>
               <button className="primary-button export" onClick={() => handleExportPhoto(selectedFrame, isVertical)}><Download size={20} /> EXPORT PHOTOS</button>
               <button className="secondary-button" onClick={handleRetake}><RotateCcw size={17} /> RETAKE</button>
             </>
           )}
-          <div className="panel-footer"><span>MADE WITH LOVE</span><span>★ ★ ★</span></div>
         </aside>
       </section>
-      <footer className="site-footer"><span>© 2024 THE PHOTO BOOTH CO.</span><span>PRINTED WHILE U WAIT <X size={13} /></span><span>PRIVATE &amp; SECURE</span></footer>
     </main>
   )
 }
