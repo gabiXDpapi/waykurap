@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ArrowDown, ArrowRight, Camera, Check, ChevronDown, CircleHelp, Download, RotateCcw, Sparkles, Star, X } from 'lucide-react'
+import { Camera, Check, Download, RotateCcw } from 'lucide-react'
 import { useCamera } from "../hooks/useCamera";
 import { usePhotoCapture } from "../hooks/usePhotoCapture";
 import { PHOTO_COUNTS } from "../constants/config";
