@@ -97,8 +97,9 @@ export default function Page() {
           ) : (
             <div className={`review-card ${isVertical ? 'vertical' : 'horizontal'}`}>
               <div className={`photo-layout ${selectedFrame.toLowerCase().replace(' ', '-')}`}>
-                {photos.slice(0, Math.min(photoCount, 3)).map((photo, index) => <img key={index} src={photo} alt={`Captured photobooth moment ${index + 1}`} />)}
-                {photoCount > 3 && <div className="photo-placeholder">+{photoCount - 3}</div>}
+                {photos.map((photo, index) => (
+                  <img key={index} src={photo} alt={`Captured photobooth moment ${index + 1}`} />
+                ))}
               </div>
             </div>
           )}
