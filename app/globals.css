@@ -36,10 +36,18 @@ button { font: inherit; cursor: pointer; }
 .horizontal .photo-layout.film-strip::after { bottom: 11px; }
 .horizontal .photo-layout.film-strip img { height: 130px; width: auto; aspect-ratio: 4/3; border: 4px solid #fff; box-shadow: 0 2px 6px rgba(0,0,0,.5); flex-shrink: 0; }
 .photo-layout.polaroid { background: transparent; }
-.vertical .photo-layout.polaroid { gap: 10px; padding: 10px; }
-.vertical .photo-layout.polaroid img { width: 170px; height: auto; aspect-ratio: 1/1; object-fit: cover; border: 7px solid #fff; border-bottom: 24px solid #fff; box-shadow: 2px 5px 12px rgba(32,27,26,.18); }
-.vertical .photo-layout.polaroid img:nth-child(odd) { transform: rotate(-1.5deg); }
-.vertical .photo-layout.polaroid img:nth-child(even) { transform: rotate(1.5deg); }
+.vertical .photo-layout.polaroid { gap: 0; padding: 10px 16px; position: relative; }
+.vertical .photo-layout.polaroid img { width: 125px; height: auto; aspect-ratio: 1/1; object-fit: cover; border: 6px solid #fff; border-bottom: 22px solid #fff; box-shadow: 0 4px 12px rgba(32,27,26,.18); position: relative; transition: transform .2s ease; }
+.vertical .photo-layout.polaroid img:not(:first-child) { margin-top: -46px; }
+.vertical .photo-layout.polaroid img:nth-child(1) { z-index: 1; transform: rotate(-2deg); }
+.vertical .photo-layout.polaroid img:nth-child(2) { z-index: 2; transform: rotate(2deg); }
+.vertical .photo-layout.polaroid img:nth-child(3) { z-index: 3; transform: rotate(-1.5deg); }
+.vertical .photo-layout.polaroid img:nth-child(4) { z-index: 4; transform: rotate(1.5deg); }
+.vertical .photo-layout.polaroid img:nth-child(5) { z-index: 5; transform: rotate(-2deg); }
+.vertical .photo-layout.polaroid img:nth-child(6) { z-index: 6; transform: rotate(2deg); }
+.vertical .photo-layout.polaroid img:hover { z-index: 10; transform: scale(1.05) rotate(0deg); }
+.vertical .photo-layout.polaroid img:nth-last-child(n+5), .vertical .photo-layout.polaroid img:nth-last-child(n+5) ~ img { width: 105px; border-width: 5px; border-bottom-width: 18px; }
+.vertical .photo-layout.polaroid img:nth-last-child(n+5):not(:first-child), .vertical .photo-layout.polaroid img:nth-last-child(n+5) ~ img:not(:first-child) { margin-top: -44px; }
 .horizontal .photo-layout.polaroid { gap: 10px; padding: 10px; width: max-content; max-width: none; flex-shrink: 0; display: inline-flex; }
 .horizontal .photo-layout.polaroid img { height: 130px; width: auto; aspect-ratio: 1/1; object-fit: cover; border: 7px solid #fff; border-bottom: 22px solid #fff; box-shadow: 2px 5px 12px rgba(32,27,26,.18); flex-shrink: 0; }
 .horizontal .photo-layout.polaroid img:nth-child(odd) { transform: translateY(-3px) rotate(-1.5deg); }
