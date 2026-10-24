@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { PhotoSessionProvider } from '@/components/PhotoSession'
 
 export default function BoothLayout({ children }: { children: React.ReactNode }) {
@@ -6,10 +7,10 @@ export default function BoothLayout({ children }: { children: React.ReactNode })
       <main className="booth-app">
         <header className="topbar">
           <div className="brand-lockup">
-            <div className="brand-mark">P</div>
+            <Image className="brand-mark" src="/way-kurap-logo.svg" alt="" width={42} height={42} />
             <div>
-              <p className="eyebrow">THE OFFICIAL</p>
-              <h1>PHOTO BOOTH</h1>
+              <p className="eyebrow">PHOTO BOOTH</p>
+              <h1>Way Kurap</h1>
             </div>
           </div>
         </header>
