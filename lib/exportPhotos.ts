@@ -47,10 +47,6 @@ export async function exportPhotos(photos: string[], selectedFrame: string = "Po
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Draw white background
-    ctx.fillStyle = "#FFFFFF";
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
     const polaroidRotations = [-6, 4, -3, 5, -5, 3];
     const polaroidShifts = [-10, 10, -5, 15, -10, 8];
 
@@ -125,7 +121,8 @@ export async function exportPhotos(photos: string[], selectedFrame: string = "Po
       ctx.fillStyle = "#0f0f0f";
       ctx.fillRect(0, 0, canvasWidth, canvasHeight);
       
-      ctx.fillStyle = "#e5e5e5";
+      // Punch transparent sprocket holes through the black frame.
+      ctx.globalCompositeOperation = "destination-out";
       const holeWidth = 12 * scale;
       const holeHeight = 12 * scale;
       const holeSpacing = 24 * scale;
@@ -146,9 +143,7 @@ export async function exportPhotos(photos: string[], selectedFrame: string = "Po
            ctx.beginPath(); ctx.roundRect(x, bottomHoleY, holeWidth, holeHeight, borderRadius); ctx.fill();
          }
       }
-    } else {
-      ctx.fillStyle = "#FFFFFF";
-      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+      ctx.globalCompositeOperation = "source-over";
     }
 
     let currentX = paddingX;
