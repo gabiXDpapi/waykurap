@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "updatedAt": "2026-10-17T15:38:19.827Z",
+  "entries": [
+    "2slides-ppt-generator",
+    "api-patterns",
+    "api-security-best-practices",
+    "architecture-decision-records",
+    "azure-ai-translation-document-py",
+    "backend-dev-guidelines",
+    "brainstorming",
+    "browser-automation",
+    "concise-planning",
+    "database-design",
+    "domain-driven-design",
+    "frontend-data-contracts",
+    "frontend-design",
+    "frontend-developer",
+    "frontend-ui-engineering",
+    "go-playwright",
+    "idor-testing",
+    "react-patterns",
+    "security-auditor",
+    "test-driven-development",
+    "write-design-md",
+    "writing-plans"
+  ]
+}
