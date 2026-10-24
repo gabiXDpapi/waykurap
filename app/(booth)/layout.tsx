@@ -8,10 +8,7 @@ export default function BoothLayout({ children }: { children: React.ReactNode })
         <header className="topbar">
           <div className="brand-lockup">
             <Image className="brand-mark" src="/way-kurap-logo.svg" alt="" width={42} height={42} />
-            <div>
-              <p className="eyebrow">PHOTO BOOTH</p>
-              <h1>Way Kurap</h1>
-            </div>
+            <h1>Way Kurap</h1>
           </div>
         </header>
 
