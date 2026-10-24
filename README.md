@@ -16,7 +16,11 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The home page redirects to `/step-1` for capture; a completed capture opens `/step-2` for frames, orientation, and export. The pages live in `app/(booth)/step-1/page.tsx` and `app/(booth)/step-2/page.tsx`.
+
+Photos and selections stay in memory during navigation. Reloading clears the session, and opening step 2 without photos redirects to step 1. Retake clears the photos and returns to step 1.
+
+Run the capture and routing regression checks with `node tests/capture-flow.mjs`.
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
