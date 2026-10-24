@@ -1,5 +1,6 @@
 ﻿import Link from 'next/link'
 import { EyeLogo } from '@/components/EyeLogo'
+import Image from 'next/image'
 import styles from './page.module.css'
 
 export default function Page() {
@@ -44,15 +45,15 @@ export default function Page() {
           <p className={styles.eyebrow}>The frames</p><h2 id="frames-title">Three looks, one booth</h2>
           <div className={styles.grid}>
             <article className={styles.frame}>
-              <div className={styles.preview} aria-hidden="true"><div className={styles.plainPhotos}><span /><span /><span /></div></div>
+              <div className={styles.preview}><Image src="/frame-no-frame.svg" width={364} height={164} alt="Three separate cream photos with thin outlines and diamond-dot patterns" /></div>
               <div className={styles.frameCopy}><h3>No frame</h3><p className={styles.tagline}>Clean &amp; simple</p><p>Bare photos on cream, nothing to distract from the faces.</p></div>
             </article>
             <article className={styles.frame}>
-              <div className={styles.preview} aria-hidden="true"><div className={styles.polaroid}><span /></div></div>
+              <div className={styles.preview}><Image src="/frame-polaroid.svg" width={364} height={164} alt="A diamond-dot photo inside a white Polaroid border with a deeper caption area below" /></div>
               <div className={styles.frameCopy}><h3>Polaroid</h3><p className={styles.tagline}>Classic white border</p><p>Thick white border with space at the bottom to write your own caption.</p></div>
             </article>
             <article className={styles.frame}>
-              <div className={`${styles.preview} ${styles.darkPreview}`} aria-hidden="true"><div className={`${styles.film} ${styles.miniFilm}`}><span /><span /><span /></div></div>
+              <div className={`${styles.preview} ${styles.darkPreview}`}><Image src="/frame-film-strip.svg" width={364} height={164} alt="Three diamond-dot photos on black film with rectangular sprocket holes down both sides" /></div>
               <div className={styles.frameCopy}><h3>Film strip</h3><p className={styles.tagline}>The vintage favourite</p><p>Black strip with sprocket holes, straight off the reel.</p></div>
             </article>
           </div>
