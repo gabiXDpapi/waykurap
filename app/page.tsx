@@ -20,7 +20,7 @@ export default function Page() {
   const [selectedFrame, setSelectedFrame] = useState('Film Strip')
   const [isVertical, setIsVertical] = useState(true)
 
-  const isComplete = photos.length >= photoCount;
+  const isComplete = photos.length >= photoCount && !isCapturing;
   const mode = isComplete ? 'review' : 'capture';
 
   return (
@@ -50,8 +50,7 @@ export default function Page() {
             </div>
           </div>
 
-          {mode === 'capture' ? (
-            <div className="camera-card">
+          <div className="camera-card" hidden={mode !== 'capture'}>
               <div className="camera-view relative w-full max-w-[600px] mx-auto aspect-[4/3]">
                 <div className="corner corner-tl z-10" /><div className="corner corner-tr z-10" /><div className="corner corner-bl z-10" /><div className="corner corner-br z-10" />
 
@@ -94,7 +93,7 @@ export default function Page() {
                 </button>
               </div>
             </div>
-          ) : (
+          {mode === 'review' && (
             <div className={`review-card ${isVertical ? 'vertical' : 'horizontal'}`}>
               <div className={`photo-layout ${selectedFrame.toLowerCase().replace(' ', '-')}`}>
                 {photos.map((photo, index) => (
@@ -111,7 +110,7 @@ export default function Page() {
             <>
               <div className="panel-section">
                 <div className="section-label"><span>HOW MANY PHOTOS?</span></div>
-                <div className="count-grid">{PHOTO_COUNTS.map(option => <button key={option} className={photoCount === option ? 'count-option selected' : 'count-option'} onClick={() => setPhotoCount(option)}><strong>{option}</strong><span>photos</span>{photoCount === option && <Check size={15} />}</button>)}</div>
+                <div className="count-grid">{PHOTO_COUNTS.map(option => <button key={option} className={photoCount === option ? 'count-option selected' : 'count-option'} disabled={isCapturing} onClick={() => setPhotoCount(option)}><strong>{option}</strong><span>photos</span>{photoCount === option && <Check size={15} />}</button>)}</div>
               </div>
               <div className="panel-divider" />
             </>
