@@ -6,6 +6,7 @@ export function useCamera() {
   const [error, setError] = useState<string>("");
 
   useEffect(() => {
+    let cancelled = false;
     let currentStream: MediaStream | null = null;
 
     const startCamera = async () => {
@@ -13,12 +14,17 @@ export function useCamera() {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
           video: true,
         });
+        if (cancelled) {
+          mediaStream.getTracks().forEach((track) => track.stop());
+          return;
+        }
         currentStream = mediaStream;
         setStream(mediaStream);
         if (videoRef.current) {
           videoRef.current.srcObject = mediaStream;
         }
       } catch (err) {
+        if (cancelled) return;
         setError("Camera permission denied or not available.");
         console.error("Error accessing camera:", err);
       }
@@ -27,6 +33,7 @@ export function useCamera() {
     startCamera();
 
     return () => {
+      cancelled = true;
       if (currentStream) {
         currentStream.getTracks().forEach((track) => track.stop());
       }

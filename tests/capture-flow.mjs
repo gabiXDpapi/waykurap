@@ -39,32 +39,90 @@ async function main() {
   const capture = runCaptureHook({ current: { videoWidth: 640, videoHeight: 480 } });
   // React Strict Mode runs setup, cleanup, then setup again in development.
   effects.forEach(effect => { effect()(); effect(); });
-  await capture.handleTakePhoto(4);
+  const captured = await capture.handleTakePhoto(4);
+  assert.equal(captured.length, 4);
   assert.equal(state[0].length, 4);
   assert.equal(state[1], null);
   assert.equal(state[2], false);
 
-  let photos = [];
-  let isCapturing = false;
-  const { default: Page } = load('app/page.tsx', {
-    '../hooks/useCamera': { useCamera: () => ({ videoRef: { current: null }, stream: {}, error: '' }) },
-    '../hooks/usePhotoCapture': { usePhotoCapture: () => ({ ...capture, photos, isCapturing }) },
-    '../constants/config': { PHOTO_COUNTS: [3, 4, 5, 6] },
+  const session = {
+    photos: [], photoCount: 4, selectedFrame: 'Film Strip', isVertical: true,
+    setPhotos(photos) { session.photos = photos; },
+    setPhotoCount() {}, setSelectedFrame() {}, setIsVertical() {},
+  };
+  const navigation = [];
+  const router = {
+    push: path => navigation.push(['push', path]),
+    replace: path => navigation.push(['replace', path]),
+  };
+  const redirect = path => { throw new Error(`redirect:${path}`); };
+  let result = captured;
+  const mocks = {
+    react: { ...React, useEffect: effect => effect() },
+    'next/navigation': { useRouter: () => router, redirect },
+    '@/components/PhotoSession': { usePhotoSession: () => session },
+    '@/hooks/useCamera': { useCamera: () => ({ videoRef: { current: null }, stream: {}, error: '' }) },
+    '@/hooks/usePhotoCapture': { usePhotoCapture: () => ({ ...capture, handleTakePhoto: async () => result }) },
+    '@/constants/config': { PHOTO_COUNTS: [3, 4, 5, 6] },
+    '@/lib/exportPhotos': { exportPhotos() {} },
+  };
+  const { default: CapturePage } = load('app/(booth)/step-1/page.tsx', mocks);
+  const { default: ReviewPage } = load('app/(booth)/step-2/page.tsx', mocks);
+  const { default: HomePage } = load('app/page.tsx', mocks);
+  const render = Page => renderToStaticMarkup(React.createElement(Page));
+  function find(node, predicate) {
+    if (!node || typeof node !== 'object') return;
+    if (predicate(node)) return node;
+    return React.Children.toArray(node.props?.children).map(child => find(child, predicate)).find(Boolean);
+  }
+  assert.throws(HomePage, /redirect:\/step-1/);
+  assert.equal(ReviewPage(), null);
+  assert.deepEqual(navigation.pop(), ['replace', '/step-1']);
+  assert.match(render(CapturePage), /STEP 01 \/ CAPTURE/);
+  const shutter = find(CapturePage(), node => node.props?.['aria-label'] === 'Take Photo');
+  for (result of [undefined, captured.slice(0, 3)]) {
+    await shutter.props.onClick();
+    assert.equal(navigation.length, 0, 'Cancelled or incomplete captures must not navigate');
+  }
+  result = captured;
+  await shutter.props.onClick();
+  assert.deepEqual(navigation.pop(), ['push', '/step-2']);
+  assert.equal(session.photos, captured);
+  assert.match(render(ReviewPage), /STEP 02 \/ MAKE IT YOURS/);
+  assert.doesNotMatch(render(ReviewPage), /<video/);
+  assert.equal((render(ReviewPage).match(/<img /g) || []).length, 4);
+  // Returning to capture does not erase the session needed by browser Forward.
+  render(CapturePage);
+  assert.equal(session.photos, captured);
+  const retake = find(ReviewPage(), node => node.props?.className === 'secondary-button');
+  retake.props.onClick();
+  assert.deepEqual(navigation.pop(), ['replace', '/step-1']);
+  assert.equal(session.photos.length, 0);
+  assert.equal(ReviewPage(), null);
+  assert.deepEqual(navigation.pop(), ['replace', '/step-1']);
+
+  effects.forEach(effect => effect()());
+  assert.equal(await capture.handleTakePhoto(4), undefined, 'Unmounted captures must not navigate');
+
+  // A camera permission request can resolve after navigating away.
+  let resolveCamera;
+  let stopped = 0;
+  let cleanup;
+  const { useCamera: runCameraHook } = load('hooks/useCamera.ts', {
+    react: {
+      useState: initial => [initial, () => {}],
+      useRef: current => ({ current }),
+      useEffect: effect => { cleanup = effect(); },
+    },
+  }, {
+    navigator: { mediaDevices: { getUserMedia: () => new Promise(resolve => { resolveCamera = resolve; }) } },
   });
-  const render = () => renderToStaticMarkup(React.createElement(Page));
-  assert.match(render(), /STEP 01 \/ CAPTURE/);
-  photos = state[0];
-  isCapturing = true;
-  assert.match(render(), /STEP 01 \/ CAPTURE/);
-  isCapturing = false;
-  assert.match(render(), /STEP 02 \/ MAKE IT YOURS/);
-  assert.match(render(), /class="camera-card" hidden=""/);
-  assert.match(render(), /<video/);
-  capture.handleRetake();
-  photos = state[0];
-  assert.match(render(), /STEP 01 \/ CAPTURE/);
-  assert.doesNotMatch(render(), /class="camera-card" hidden/);
-  console.log('Capture, review, retake, and Strict Mode countdown checks passed.');
+  runCameraHook();
+  cleanup();
+  resolveCamera({ getTracks: () => [{ stop() { stopped++; } }] });
+  await new Promise(setImmediate);
+  assert.equal(stopped, 1);
+  console.log('Capture, routing, empty-session redirects, retake, cancellation, and camera cleanup checks passed.');
 }
 
 main().catch(error => { console.error(error); process.exitCode = 1; });
