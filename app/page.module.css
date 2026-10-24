@@ -44,7 +44,7 @@
 .ticker { overflow: hidden; padding: 18px 0; background: var(--red); color: var(--landing-white); }
 .tickerTrack { display: flex; width: max-content; animation: conveyor 30s linear infinite; }
 .tickerGroup { display: flex; flex-shrink: 0; justify-content: space-around; gap: 24px; min-width: 100vw; padding-right: 24px; }
-.tickerGroup span { color: var(--landing-white); font-size: 13px; font-weight: 800; letter-spacing: .25em; word-spacing: 20px; white-space: nowrap; }
+.tickerGroup span { color: #fff !important; -webkit-text-fill-color: #fff !important; font-size: 13px; font-weight: 800; letter-spacing: .25em; word-spacing: 20px; white-space: nowrap; }
 .ticker:hover .tickerTrack, .ticker:focus .tickerTrack { animation-play-state: paused; }
 .ticker:focus-visible { outline: 2px solid var(--landing-white); outline-offset: -5px; }
 @keyframes conveyor { to { transform: translateX(-50%); } }
