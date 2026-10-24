@@ -2,24 +2,10 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'The Photo Booth — Make a Memory',
+  title: 'Way Kurap — Make a Memory',
   description: 'A nostalgic digital photo booth for making memories.',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: { url: '/way-kurap-logo.svg', type: 'image/svg+xml' },
   },
 }
 
