@@ -1,4 +1,4 @@
-import Image from 'next/image'
+import { EyeLogo } from '@/components/EyeLogo'
 import { PhotoSessionProvider } from '@/components/PhotoSession'
 
 export default function BoothLayout({ children }: { children: React.ReactNode }) {
@@ -7,7 +7,7 @@ export default function BoothLayout({ children }: { children: React.ReactNode })
       <main className="booth-app">
         <header className="topbar">
           <div className="brand-lockup">
-            <Image className="brand-mark" src="/way-kurap-logo.svg" alt="" width={42} height={42} />
+            <EyeLogo />
             <h1>Way Kurap</h1>
           </div>
         </header>
