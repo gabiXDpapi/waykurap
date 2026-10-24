@@ -45,15 +45,15 @@ export default function Page() {
           <div className={styles.grid}>
             <article className={styles.frame}>
               <div className={styles.preview} aria-hidden="true"><div className={styles.plainPhotos}><span /><span /><span /></div></div>
-              <div className={styles.frameCopy}><h3>No frame</h3><p className={styles.tagline}>Clean &amp; simple</p><p>Less frame on screen, nothing to distract from the faces.</p></div>
+              <div className={styles.frameCopy}><h3>No frame</h3><p className={styles.tagline}>Clean &amp; simple</p><p>Bare photos on cream, nothing to distract from the faces.</p></div>
             </article>
             <article className={styles.frame}>
               <div className={styles.preview} aria-hidden="true"><div className={styles.polaroid}><span /></div></div>
-              <div className={styles.frameCopy}><h3>Polaroid</h3><p className={styles.tagline}>Classic white borders</p><p>Thick white borders with space at the bottom to write your own caption.</p></div>
+              <div className={styles.frameCopy}><h3>Polaroid</h3><p className={styles.tagline}>Classic white border</p><p>Thick white border with space at the bottom to write your own caption.</p></div>
             </article>
             <article className={styles.frame}>
               <div className={`${styles.preview} ${styles.darkPreview}`} aria-hidden="true"><div className={`${styles.film} ${styles.miniFilm}`}><span /><span /><span /></div></div>
-              <div className={styles.frameCopy}><h3>Film strip</h3><p className={styles.tagline}>The vintage favourite</p><p>Black strips with sprocket holes, straight off the reel.</p></div>
+              <div className={styles.frameCopy}><h3>Film strip</h3><p className={styles.tagline}>The vintage favourite</p><p>Black strip with sprocket holes, straight off the reel.</p></div>
             </article>
           </div>
         </section>

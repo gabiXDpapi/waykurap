@@ -47,25 +47,34 @@
 .section + .section { border-top: 1px solid var(--landing-line); }
 .eyebrow { color: var(--red); font-size: 10px; margin: 0 0 20px; }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
-.step, .frame { border: 1px solid var(--ink); background: var(--landing-white); box-shadow: 2px 2px 0 var(--landing-line); }
-.step { padding: 30px 24px; }
+.step, .frame { border: 1px solid var(--ink); background: var(--landing-white); }
+.step { padding: 30px 24px; box-shadow: 2px 2px 0 var(--landing-line); }
 .number { font: italic 700 38px Georgia, serif; color: var(--red); }
 .landing h3 { margin: 16px 0 12px; font-size: 13px; }
-.step p, .frameCopy > p:last-child, .footerCopy { font: 14px/1.65 Georgia, serif; color: var(--landing-muted); margin: 0; }
-.preview { height: 170px; display: flex; justify-content: center; align-items: center; background: var(--landing-preview); border-bottom: 1px solid var(--ink); overflow: hidden; }
-.plainPhotos { display: flex; gap: 8px; height: 120px; width: 65%; }
-.plainPhotos span { flex: 1; background: var(--landing-cream); }
-.polaroid { height: 160px; width: 100px; padding: 8px 8px 24px; border: 1px solid var(--landing-line); background: var(--landing-white); }
-.polaroid span { display: block; height: 100%; background: var(--landing-cream); border: 1px solid var(--landing-line); }
-.darkPreview { background: var(--ink); }
-.miniFilm { width: 92px; gap: 10px; padding: 10px 17px; }
+.step p, .footerCopy { font: 14px/1.65 Georgia, serif; color: var(--landing-muted); margin: 0; }
+.frame { --frame-ink: #1a1a1a; --frame-red: #d90000; --frame-pattern: #b7b4aa; border-color: var(--frame-ink); }
+.preview { height: 164px; display: flex; justify-content: center; align-items: center; background: var(--landing-preview); border-bottom: 1px solid var(--frame-ink); overflow: hidden; }
+.plainPhotos { display: flex; gap: 8px; height: 118px; width: 65%; max-width: 236px; }
+.plainPhotos span { flex: 1; min-width: 0; }
+.polaroid { height: 164px; width: 104px; padding: 8px 8px 26px; border: 1px solid var(--landing-line); background: var(--landing-white); }
+.polaroid span { display: block; height: 100%; }
+.darkPreview, .miniFilm { background: var(--frame-ink); }
+.miniFilm { width: 92px; gap: 15px; padding: 0 17px; }
 .miniFilm > span { aspect-ratio: 1.6; }
-.miniFilm::before, .miniFilm::after { width: 5px; top: 10px; bottom: 10px; background-size: 100% 20px; }
+.plainPhotos span, .polaroid span, .miniFilm > span {
+  border: 1px solid var(--landing-line);
+  background-color: var(--landing-cream);
+  background-image: radial-gradient(ellipse 1.5px .5px at center, var(--frame-pattern) 95%, transparent), radial-gradient(ellipse .5px 1.5px at center, var(--frame-pattern) 95%, transparent);
+  background-size: 8px 8px;
+  background-position: center;
+}
+.miniFilm::before, .miniFilm::after { width: 6px; top: 3px; bottom: 3px; background: repeating-linear-gradient(to bottom, var(--landing-cream) 0 8px, transparent 8px 21px); }
 .miniFilm::before { left: 4px; }
 .miniFilm::after { right: 4px; }
-.frameCopy { padding: 24px; }
-.frameCopy h3 { margin-top: 0; }
-.tagline { color: var(--red); font-size: 9px; margin: 0 0 13px; }
+.frameCopy { min-height: 139px; padding: 24px 23px; color: var(--frame-ink); }
+.frameCopy h3 { margin: 0 0 8px; font-size: 15px; line-height: 1.2; }
+.tagline { color: var(--frame-red); font-size: 10px; line-height: 1.2; margin: 0 0 13px; }
+.frameCopy > p:last-child { font: 13px/1.65 Arial, Helvetica, sans-serif; margin: 0; }
 .footer { border-top: 1px solid var(--ink); }
 .footerGrid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 48px; padding-top: 50px; padding-bottom: 50px; }
 .footerBrand { font: italic 900 30px/1 Georgia, serif; letter-spacing: -.04em; color: var(--red); }
@@ -101,8 +110,6 @@
   .section { padding-top: 48px; padding-bottom: 48px; }
   .grid { grid-template-columns: 1fr; gap: 20px; }
   .step { padding: 24px; }
-  .preview { height: 190px; }
-  .plainPhotos { width: 60%; }
   .footerGrid { grid-template-columns: 1fr 1fr; gap: 36px 20px; }
   .footerGrid > div:first-child { grid-column: 1 / -1; }
   .footerStart .button { padding: 12px; font-size: 9px; }
