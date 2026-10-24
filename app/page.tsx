@@ -32,7 +32,20 @@ export default function Page() {
             <div className={styles.checkerSticker} />
           </div>
         </section>
-        <div className={styles.ticker} aria-hidden="true"><span>Share ✶ Repeat ✶ Pose ✶ Print ✶ Share ✶ Repeat ✶ Pose ✶ Print ✶ Share ✶ Repeat ✶ Pose ✶ Print ✶</span></div>
+        <div className={styles.ticker} tabIndex={0} role="group" aria-label="Pose, pick, download, repeat. Focus or hover to pause the animation.">
+          <div className={styles.tickerTrack} aria-hidden="true">
+            <div className={styles.tickerGroup}>
+              <span>POSE ✶ PICK ✶ DOWNLOAD ✶ REPEAT ✶</span>
+              <span>POSE ✶ PICK ✶ DOWNLOAD ✶ REPEAT ✶</span>
+              <span>POSE ✶ PICK ✶ DOWNLOAD ✶ REPEAT ✶</span>
+            </div>
+            <div className={styles.tickerGroup}>
+              <span>POSE ✶ PICK ✶ DOWNLOAD ✶ REPEAT ✶</span>
+              <span>POSE ✶ PICK ✶ DOWNLOAD ✶ REPEAT ✶</span>
+              <span>POSE ✶ PICK ✶ DOWNLOAD ✶ REPEAT ✶</span>
+            </div>
+          </div>
+        </div>
         <section className={styles.section} id="how-it-works" aria-labelledby="steps-title">
           <p className={styles.eyebrow}>Step by step</p><h2 id="steps-title">From “ready?” to a strip you<br />keep</h2>
           <div className={styles.grid}>

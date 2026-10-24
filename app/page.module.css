@@ -42,7 +42,13 @@
 .checkerSticker, .footerChecker { background: repeating-conic-gradient(var(--landing-white) 0 25%, var(--red) 0 50%) 0 / 12px 12px; }
 .checkerSticker { position: absolute; width: 90px; height: 26px; bottom: -18px; left: -19px; border: 1px solid var(--ink); transform: rotate(-2deg); }
 .ticker { overflow: hidden; padding: 18px 0; background: var(--red); color: var(--landing-white); }
-.ticker span { display: block; width: max-content; font-size: 13px; font-weight: 800; letter-spacing: .25em; word-spacing: 20px; text-transform: uppercase; }
+.tickerTrack { display: flex; width: max-content; animation: conveyor 30s linear infinite; }
+.tickerGroup { display: flex; flex-shrink: 0; justify-content: space-around; gap: 24px; min-width: 100vw; padding-right: 24px; }
+.tickerGroup span { color: var(--landing-white); font-size: 13px; font-weight: 800; letter-spacing: .25em; word-spacing: 20px; white-space: nowrap; }
+.ticker:hover .tickerTrack, .ticker:focus .tickerTrack { animation-play-state: paused; }
+.ticker:focus-visible { outline: 2px solid var(--landing-white); outline-offset: -5px; }
+@keyframes conveyor { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .tickerTrack { animation: none; } }
 .section { padding-top: 72px; padding-bottom: 72px; scroll-margin-top: 24px; }
 .section + .section { border-top: 1px solid var(--landing-line); }
 .eyebrow { color: var(--red); font-size: 10px; margin: 0 0 20px; }

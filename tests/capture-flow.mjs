@@ -81,6 +81,8 @@ async function main() {
   }
   const home = render(HomePage);
   assert.match(home, /Strike a pose/);
+  assert.equal((home.match(/POSE ✶ PICK ✶ DOWNLOAD ✶ REPEAT ✶/g) || []).length, 6);
+  assert.match(home, /Focus or hover to pause the animation/);
   assert.equal((home.match(/href="\/step-1"/g) || []).length, 3);
   for (const section of ['how-it-works', 'frames']) {
     assert.match(home, new RegExp(`id="${section}"`));
