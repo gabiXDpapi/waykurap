@@ -30,7 +30,7 @@ export default function Page() {
             <div className={`camera-view ${styles.heroCamera}`} aria-hidden="true">
               <div className="corner corner-tl" /><div className="corner corner-tr" />
               <div className="corner corner-bl" /><div className="corner corner-br" />
-              <div className="view-content"><em className={styles.heroWordmark}>Way Kurap</em></div>
+              <div className={`view-content ${styles.heroLogo}`}><EyeLogo /></div>
             </div>
             <div className="mt-4 flex justify-center items-center">
               <Link href="/step-1" aria-label="Open the photo booth" className="w-16 h-16 bg-[#ff3b30] rounded-full flex items-center justify-center text-white shadow-[0_2px_4px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.4)] border border-[#d63028] hover:bg-[#ff2d20] active:scale-95 transition-all">
