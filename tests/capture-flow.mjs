@@ -68,14 +68,36 @@ async function main() {
   };
   const { default: CapturePage } = load('app/(booth)/step-1/page.tsx', mocks);
   const { default: ReviewPage } = load('app/(booth)/step-2/page.tsx', mocks);
-  const { default: HomePage } = load('app/page.tsx', mocks);
+  const { default: HomePage } = load('app/page.tsx', {
+    ...mocks,
+    '@/components/EyeLogo': { EyeLogo: () => null },
+    './page.module.css': { default: {} },
+  });
   const render = Page => renderToStaticMarkup(React.createElement(Page));
+  const { default: BoothLayout } = load('app/(booth)/layout.tsx', {
+    '@/components/EyeLogo': { EyeLogo: () => null },
+    '@/components/PhotoSession': { PhotoSessionProvider: ({ children }) => children },
+  });
+  for (const header of [render(HomePage), render(BoothLayout)]) {
+    assert.match(header, /<a[^>]*aria-label="Way Kurap home"[^>]*href="\/"[^>]*><h1>Way Kurap<\/h1><\/a>/);
+  }
   function find(node, predicate) {
     if (!node || typeof node !== 'object') return;
     if (predicate(node)) return node;
     return React.Children.toArray(node.props?.children).map(child => find(child, predicate)).find(Boolean);
   }
-  assert.throws(HomePage, /redirect:\/step-1/);
+  const home = render(HomePage);
+  assert.match(home, /Strike a pose/);
+  assert.equal((home.match(/POSE ✶ PICK ✶ DOWNLOAD ✶ REPEAT ✶/g) || []).length, 6);
+  assert.match(home, /Focus or hover to pause the animation/);
+  assert.equal((home.match(/href="\/step-1"/g) || []).length, 4);
+  assert.match(home, /aria-label="Open the photo booth"/);
+  assert.match(home, /class="camera-card /);
+  for (const section of ['how-it-works', 'frames']) {
+    assert.match(home, new RegExp(`id="${section}"`));
+    assert.match(home, new RegExp(`href="#${section}"`));
+  }
+  assert.doesNotMatch(home, /<video/);
   assert.equal(ReviewPage(), null);
   assert.deepEqual(navigation.pop(), ['replace', '/step-1']);
   assert.match(render(CapturePage), /STEP 01 \/ CAPTURE/);

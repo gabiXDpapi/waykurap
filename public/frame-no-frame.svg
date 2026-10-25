@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="364" height="164" viewBox="0 0 364 164">
+  <defs>
+    <pattern id="dots" width="8.3" height="8.3" patternUnits="userSpaceOnUse">
+      <rect width="8.3" height="8.3" fill="#f7f4eb"/>
+      <path d="M4.15 2.9 5.4 4.15 4.15 5.4 2.9 4.15Z" fill="#b7b4aa"/>
+    </pattern>
+  </defs>
+  <g fill="url(#dots)" stroke="#d7d4ca" stroke-width=".75">
+    <rect transform="translate(64 23)" width="73" height="118"/>
+    <rect transform="translate(145 23)" width="73" height="118"/>
+    <rect transform="translate(226 23)" width="73" height="118"/>
+  </g>
+</svg>
