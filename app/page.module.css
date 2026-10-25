@@ -32,7 +32,8 @@
 .heroArt { width: 100%; }
 .heroArt .heroCamera { aspect-ratio: 4 / 3; min-height: 0; }
 .heroLogo { width: 44%; max-width: 220px; }
-.heroLogo svg { width: 100%; height: auto; }
+.heroLogo svg { width: 100%; height: auto; background: none; box-shadow: none; transform: none; }
+.heroLogo svg > rect { display: none; }
 .footerChecker { background: repeating-conic-gradient(var(--landing-white) 0 25%, var(--red) 0 50%) 0 / 12px 12px; }
 .ticker { overflow: hidden; padding: 18px 0; background: var(--red); color: var(--landing-white); }
 .tickerTrack { display: flex; width: max-content; animation: conveyor 30s linear infinite; }
