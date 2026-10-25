@@ -76,7 +76,6 @@ export default function Page() {
           </div>
       </div>
       <aside className="control-panel">
-        <div className="panel-ribbon">LET&apos;S MAKE SOME MAGIC</div>
         <div className="panel-section">
           <div className="section-label"><span>HOW MANY PHOTOS?</span></div>
           <div className="count-grid">{PHOTO_COUNTS.map(option => <button key={option} className={photoCount === option ? 'count-option selected' : 'count-option'} disabled={isCapturing} onClick={() => setPhotoCount(option)}><strong>{option}</strong><span>photos</span>{photoCount === option && <Check size={15} />}</button>)}</div>
