@@ -60,6 +60,7 @@ export default function Page() {
             <article className={styles.step}><span className={styles.number}>03</span><h3>Export</h3><p>Download the finished strip in one tap and drop it straight into the group chat.</p></article>
           </div>
         </section>
+        <div className="checker-rule" aria-hidden="true" />
         <section className={styles.section} id="frames" aria-labelledby="frames-title">
           <p className={styles.eyebrow}>The frames</p><h2 id="frames-title">Three looks, one booth</h2>
           <div className={styles.grid}>
