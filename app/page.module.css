@@ -43,6 +43,7 @@
 @keyframes conveyor { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .tickerTrack { animation: none; } }
 .section { padding-top: 72px; padding-bottom: 72px; scroll-margin-top: 24px; }
+.divider { height: 1px; background: var(--ink); }
 .eyebrow { color: var(--red); font-size: 10px; margin: 0 0 20px; }
 .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
 .step, .frame { border: 1px solid var(--ink); background: var(--landing-white); }

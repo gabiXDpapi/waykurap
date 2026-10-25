@@ -60,7 +60,7 @@ export default function Page() {
             <article className={styles.step}><span className={styles.number}>03</span><h3>Export</h3><p>Download the finished strip in one tap and drop it straight into the group chat.</p></article>
           </div>
         </section>
-        <div className="checker-rule" aria-hidden="true" />
+        <div className={styles.divider} aria-hidden="true" />
         <section className={styles.section} id="frames" aria-labelledby="frames-title">
           <p className={styles.eyebrow}>The frames</p><h2 id="frames-title">Three looks, one booth</h2>
           <div className={styles.grid}>
@@ -86,7 +86,7 @@ export default function Page() {
           <nav className={styles.footerNav} aria-label="Footer navigation"><p className={styles.eyebrow}>Explore</p><a href="#how-it-works">How it works</a><a href="#frames">Frames</a></nav>
           <div className={styles.footerStart}><p className={styles.eyebrow}>Start</p><p>Ready to say cheese?</p><Link className={styles.button} href="/step-1">Open the booth</Link></div>
         </div>
-        <div className="checker-rule" aria-hidden="true" />
+        <div className={styles.divider} aria-hidden="true" />
         <p className={styles.copyright}>© 2026 Way Kurap</p>
       </footer>
     </div>
