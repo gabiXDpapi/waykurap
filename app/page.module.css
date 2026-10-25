@@ -66,7 +66,6 @@
 .frameCopy h3 { margin: 0 0 8px; font-size: 15px; line-height: 1.2; }
 .tagline { color: var(--frame-red); font-size: 10px; line-height: 1.2; margin: 0 0 13px; }
 .frameCopy > p:last-child { font: 13px/1.65 Arial, Helvetica, sans-serif; margin: 0; }
-.footer { border-top: 1px solid var(--ink); }
 .footerGrid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 48px; padding-top: 50px; padding-bottom: 50px; }
 .footerBrand { font: italic 900 30px/1 Georgia, serif; letter-spacing: -.04em; color: var(--red); }
 .footerCopy { margin-top: 20px; max-width: 320px; }

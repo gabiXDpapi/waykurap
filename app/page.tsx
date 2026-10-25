@@ -72,7 +72,8 @@ export default function Page() {
           </div>
         </section>
       </main>
-      <footer className={styles.footer}>
+      <footer>
+        <div className="checker-rule" aria-hidden="true" />
         <div className={styles.footerGrid}>
           <div><div className="brand-lockup"><EyeLogo /><span className={styles.footerBrand}>Way Kurap</span></div><p className={styles.footerCopy}>A browser photo booth for weddings, birthdays and<br />every night worth remembering.</p></div>
           <nav className={styles.footerNav} aria-label="Footer navigation"><p className={styles.eyebrow}>Explore</p><a href="#how-it-works">How it works</a><a href="#frames">Frames</a></nav>
