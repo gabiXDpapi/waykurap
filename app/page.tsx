@@ -26,7 +26,6 @@ export default function Page() {
             <p className={styles.finePrint}>No sign up · Phone or laptop · Photos stay on your device</p>
           </div>
           <div className={styles.heroArt} aria-hidden="true">
-            <span className={styles.roll}>Roll 04</span>
             <div className={styles.film}><span /><span /><span /><span /></div>
             <div className={styles.artCaption}><em>Way Kurap</em><span>Good times</span></div>
             <div className={styles.checkerSticker} />
