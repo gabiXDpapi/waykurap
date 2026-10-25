@@ -9,7 +9,7 @@ export default function Page() {
     <div className={styles.landing}>
       <a className={styles.skipLink} href="#main">Skip to content</a>
       <header className={`topbar ${styles.header}`}>
-        <div className="brand-lockup"><EyeLogo /><h1>Way Kurap</h1></div>
+        <Link href="/" className="brand-lockup" aria-label="Way Kurap home"><EyeLogo /><h1>Way Kurap</h1></Link>
         <nav className={styles.navigation} aria-label="Main navigation"><a href="#how-it-works">How it works</a><a href="#frames">Frames</a></nav>
         <Link className={styles.button} href="/step-1">Start photobooth</Link>
       </header>

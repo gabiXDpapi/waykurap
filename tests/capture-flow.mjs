@@ -74,6 +74,13 @@ async function main() {
     './page.module.css': { default: {} },
   });
   const render = Page => renderToStaticMarkup(React.createElement(Page));
+  const { default: BoothLayout } = load('app/(booth)/layout.tsx', {
+    '@/components/EyeLogo': { EyeLogo: () => null },
+    '@/components/PhotoSession': { PhotoSessionProvider: ({ children }) => children },
+  });
+  for (const header of [render(HomePage), render(BoothLayout)]) {
+    assert.match(header, /<a[^>]*aria-label="Way Kurap home"[^>]*href="\/"[^>]*><h1>Way Kurap<\/h1><\/a>/);
+  }
   function find(node, predicate) {
     if (!node || typeof node !== 'object') return;
     if (predicate(node)) return node;
