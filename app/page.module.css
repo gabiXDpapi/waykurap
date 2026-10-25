@@ -34,7 +34,6 @@
 .heroLogo svg { width: 100%; height: auto; background: none; box-shadow: none; transform: none; }
 .heroLogo svg > rect { display: none; }
 .heroLogo ellipse { stroke: var(--ink); stroke-width: 2; vector-effect: non-scaling-stroke; }
-.footerChecker { background: repeating-conic-gradient(var(--landing-white) 0 25%, var(--red) 0 50%) 0 / 12px 12px; }
 .ticker { overflow: hidden; padding: 18px 0; background: var(--red); color: var(--landing-white); }
 .tickerTrack { display: flex; width: max-content; animation: conveyor 30s linear infinite; }
 .tickerGroup { display: flex; flex-shrink: 0; justify-content: space-around; gap: 24px; min-width: 100vw; padding-right: 24px; }
@@ -66,7 +65,6 @@
 .footerNav .eyebrow, .footerStart .eyebrow { color: var(--landing-muted); margin-bottom: 0; }
 .footerNav a, .footerStart > p:not(.eyebrow) { color: var(--ink); font-size: 12px; font-weight: 700; }
 .footerStart > p:not(.eyebrow) { margin: 18px 0; }
-.footerChecker { height: 12px; }
 .copyright { padding-top: 20px; padding-bottom: 20px; font-size: 9px; color: var(--landing-muted); }
 .skipLink { position: absolute; top: -100px; left: 20px; padding: 12px; color: var(--ink); background: var(--landing-white); z-index: 10; }
 .skipLink:focus { top: 12px; }
