@@ -65,4 +65,5 @@ button { font: inherit; cursor: pointer; }
 @media (max-width: 520px) { .top-actions span:not(.status-dot) { display: none; }.stage-heading { align-items: start; }.stage-heading h2 { font-size: 37px; }.step-pills { padding-top: 6px; }.camera-view { min-height: 330px; }.workspace { padding-left: 20px; padding-right: 20px; }.control-panel { padding-left: 20px; padding-right: 20px; }.vertical .photo-layout img { width: 180px; max-width: 100%; }.horizontal .photo-layout img { height: 120px; width: auto; }.site-footer { padding-left: 20px; padding-right: 20px; } }
 .dark { color-scheme: light; }
 @layer base { * { border-color: transparent; } }
-.countdown-ready { font-size: clamp(24px, 6vw, 48px); text-align: center; }
+.countdown-ready { max-width: calc(100% - 32px); font-size: clamp(36px, 8vw, 80px); line-height: 1.1; text-align: center; }
+.camera-view:has(.countdown-ready) video { filter: blur(3px); }

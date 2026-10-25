@@ -60,7 +60,7 @@ export default function Page() {
               )}
 
               {countdown !== null && (
-                <div className={`countdown z-10 ${countdown === 'GET READY' ? 'countdown-ready' : ''}`}>{countdown}</div>
+                <div className={`countdown z-10 ${countdown === 'GET READY' ? 'countdown-ready' : ''}`}>{countdown === 'GET READY' ? 'Get Ready!' : countdown}</div>
               )}
             </div>
             <div className="mt-4 flex justify-center items-center">
