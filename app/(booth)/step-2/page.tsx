@@ -45,7 +45,6 @@ export default function Page() {
           </div>
       </div>
       <aside className="control-panel">
-        <div className="panel-ribbon">THE FINISHING TOUCHES</div>
         <div className="panel-section"><div className="section-label"><span>CHOOSE A FRAME</span></div><div className="frame-list">{frames.map(item => <button key={item.name} className={selectedFrame === item.name ? 'frame-option selected' : 'frame-option'} onClick={() => setSelectedFrame(item.name)}><span className="frame-icon">{item.icon}</span><span><strong>{item.name}</strong><small>{item.detail}</small></span>{selectedFrame === item.name && <Check size={17} />}</button>)}</div></div>
         <div className="panel-divider" />
         <div className="panel-section"><div className="section-label"><span>ORIENTATION</span></div><div className="orientation-toggle"><button className={isVertical ? 'selected' : ''} onClick={() => setIsVertical(true)}>VERTICAL</button><button className={!isVertical ? 'selected' : ''} onClick={() => setIsVertical(false)}>HORIZONTAL</button></div></div>
