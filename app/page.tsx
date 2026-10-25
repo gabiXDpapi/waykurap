@@ -28,7 +28,6 @@ export default function Page() {
           <div className={styles.heroArt} aria-hidden="true">
             <div className={styles.film}><span /><span /><span /><span /></div>
             <div className={styles.artCaption}><em>Way Kurap</em><span>Good times</span></div>
-            <div className={styles.checkerSticker} />
           </div>
         </section>
         <div className={styles.ticker} tabIndex={0} role="group" aria-label="Pose, pick, download, repeat. Focus or hover to pause the animation.">

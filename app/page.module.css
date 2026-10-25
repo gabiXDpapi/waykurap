@@ -38,8 +38,7 @@
 .artCaption { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; gap: 12px; }
 .artCaption em { font: italic 700 20px Georgia, serif; color: var(--red); }
 .artCaption span { font-size: 8px; }
-.checkerSticker, .footerChecker { background: repeating-conic-gradient(var(--landing-white) 0 25%, var(--red) 0 50%) 0 / 12px 12px; }
-.checkerSticker { position: absolute; width: 90px; height: 26px; bottom: -18px; left: -19px; border: 1px solid var(--ink); transform: rotate(-2deg); }
+.footerChecker { background: repeating-conic-gradient(var(--landing-white) 0 25%, var(--red) 0 50%) 0 / 12px 12px; }
 .ticker { overflow: hidden; padding: 18px 0; background: var(--red); color: var(--landing-white); }
 .tickerTrack { display: flex; width: max-content; animation: conveyor 30s linear infinite; }
 .tickerGroup { display: flex; flex-shrink: 0; justify-content: space-around; gap: 24px; min-width: 100vw; padding-right: 24px; }
