@@ -59,10 +59,6 @@ export default function Page() {
                 </div>
               )}
 
-              <div className="absolute top-4 left-4 z-10">
-                {stream && <div className="live-badge"><span /> LIVE</div>}
-              </div>
-
               {countdown !== null && (
                 <div className="countdown z-10">{countdown}</div>
               )}
