@@ -10,7 +10,7 @@
 .landing a:focus-visible { outline: 3px solid var(--red); outline-offset: 5px; }
 .header { gap: 24px; }
 .navigation { display: flex; gap: 32px; }
-.navigation a, .button, .eyebrow, .badge, .finePrint, .landing h3, .tagline, .artCaption span, .copyright {
+.navigation a, .button, .eyebrow, .badge, .finePrint, .landing h3, .tagline, .copyright {
   font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
 }
 .navigation a { color: var(--ink); }
@@ -35,9 +35,8 @@
 .film::before { left: 9px; }
 .film::after { right: 9px; }
 .film > span { display: block; aspect-ratio: 3.5; background: var(--landing-cream); }
-.artCaption { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; gap: 12px; }
+.artCaption { display: flex; align-items: center; padding: 18px 0; }
 .artCaption em { font: italic 700 20px Georgia, serif; color: var(--red); }
-.artCaption span { font-size: 8px; }
 .footerChecker { background: repeating-conic-gradient(var(--landing-white) 0 25%, var(--red) 0 50%) 0 / 12px 12px; }
 .ticker { overflow: hidden; padding: 18px 0; background: var(--red); color: var(--landing-white); }
 .tickerTrack { display: flex; width: max-content; animation: conveyor 30s linear infinite; }
