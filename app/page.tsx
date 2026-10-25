@@ -27,7 +27,7 @@ export default function Page() {
             <p className={styles.finePrint}>No sign up · Phone or laptop · Photos stay on your device</p>
           </div>
           <div className={`camera-card ${styles.heroArt}`}>
-            <div className={`camera-view ${styles.heroCamera}`} aria-hidden="true">
+            <div className={styles.heroCamera} aria-hidden="true">
               <div className="corner corner-tl" /><div className="corner corner-tr" />
               <div className="corner corner-bl" /><div className="corner corner-br" />
               <div className={`view-content ${styles.heroLogo}`}><EyeLogo /></div>
