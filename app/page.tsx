@@ -17,7 +17,6 @@ export default function Page() {
       <main id="main">
         <section className={styles.hero} aria-labelledby="hero-title">
           <div>
-            <p className={styles.badge}>↗ The photo booth in your browser</p>
             <h2 id="hero-title">Strike a pose. Take<br />home <em>the magic.</em></h2>
             <p className={styles.intro}>Snap those kulit shots with a proper countdown, dress your strip in a frame you love, and download it before the party moves on.</p>
             <div className={styles.actions}>
