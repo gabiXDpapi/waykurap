@@ -83,7 +83,9 @@ async function main() {
   assert.match(home, /Strike a pose/);
   assert.equal((home.match(/POSE ✶ PICK ✶ DOWNLOAD ✶ REPEAT ✶/g) || []).length, 6);
   assert.match(home, /Focus or hover to pause the animation/);
-  assert.equal((home.match(/href="\/step-1"/g) || []).length, 3);
+  assert.equal((home.match(/href="\/step-1"/g) || []).length, 4);
+  assert.match(home, /aria-label="Open the photo booth"/);
+  assert.match(home, /class="camera-card /);
   for (const section of ['how-it-works', 'frames']) {
     assert.match(home, new RegExp(`id="${section}"`));
     assert.match(home, new RegExp(`href="#${section}"`));

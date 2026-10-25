@@ -1,6 +1,7 @@
 ﻿import Link from 'next/link'
 import { EyeLogo } from '@/components/EyeLogo'
 import Image from 'next/image'
+import { Camera } from 'lucide-react'
 import styles from './page.module.css'
 
 export default function Page() {
@@ -25,9 +26,17 @@ export default function Page() {
             </div>
             <p className={styles.finePrint}>No sign up · Phone or laptop · Photos stay on your device</p>
           </div>
-          <div className={styles.heroArt} aria-hidden="true">
-            <div className={styles.film}><span /><span /><span /><span /></div>
-            <div className={styles.artCaption}><em>Way Kurap</em></div>
+          <div className={`camera-card ${styles.heroArt}`}>
+            <div className={`camera-view ${styles.heroCamera}`} aria-hidden="true">
+              <div className="corner corner-tl" /><div className="corner corner-tr" />
+              <div className="corner corner-bl" /><div className="corner corner-br" />
+              <div className="view-content"><em className={styles.heroWordmark}>Way Kurap</em></div>
+            </div>
+            <div className="mt-4 flex justify-center items-center">
+              <Link href="/step-1" aria-label="Open the photo booth" className="w-16 h-16 bg-[#ff3b30] rounded-full flex items-center justify-center text-white shadow-[0_2px_4px_rgba(0,0,0,0.2),inset_0_1px_2px_rgba(255,255,255,0.4)] border border-[#d63028] hover:bg-[#ff2d20] active:scale-95 transition-all">
+                <Camera size={28} fill="currentColor" strokeWidth={1} aria-hidden="true" />
+              </Link>
+            </div>
           </div>
         </section>
         <div className={styles.ticker} tabIndex={0} role="group" aria-label="Pose, pick, download, repeat. Focus or hover to pause the animation.">
