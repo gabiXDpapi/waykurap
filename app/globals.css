@@ -67,3 +67,4 @@ button { font: inherit; cursor: pointer; }
 @layer base { * { border-color: transparent; } }
 .countdown-ready { max-width: calc(100% - 32px); font-size: clamp(36px, 8vw, 80px); line-height: 1.1; text-align: center; }
 .camera-view:has(.countdown-ready) video { filter: blur(3px); }
+.control-panel > .panel-section:first-child > .section-label { font-size: 20px; line-height: 1.25; letter-spacing: .06em; }
