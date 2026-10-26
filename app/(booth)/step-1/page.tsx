@@ -10,7 +10,7 @@ import { PHOTO_COUNTS } from '@/constants/config'
 export default function Page() {
   const router = useRouter()
   const { photoCount, setPhotoCount, setPhotos } = usePhotoSession()
-  const { videoRef, stream, error } = useCamera()
+  const { videoRef, stream, error, requested, enableCamera } = useCamera()
   const { countdown, isCapturing, showFlash, handleTakePhoto } = usePhotoCapture(videoRef)
 
   async function takePhotos() {
@@ -53,8 +53,8 @@ export default function Page() {
                 <div className="view-content relative z-10 bg-black/40 p-6 rounded-xl backdrop-blur-sm m-4">
                   <div className="view-copy">
                     <Camera size={31} strokeWidth={1.5} />
-                    <span>{error ? 'Camera Access Denied' : 'Waiting for camera...'}</span>
-                    <small>{error || 'Please allow camera permissions'}</small>
+                    <span>{error ? 'Camera unavailable' : requested ? 'Waiting for camera...' : 'Your camera is off'}</span>
+                    <small role="status">{error || (requested ? 'Please allow camera permissions' : 'Choose Enable camera to begin.')}</small>
                   </div>
                 </div>
               )}
@@ -76,6 +76,11 @@ export default function Page() {
           </div>
       </div>
       <aside className="control-panel">
+        <div className="panel-section">
+          <p className="mb-4 text-sm">Photos are processed in this browser and are not uploaded by this app. We use your camera, never your microphone.</p>
+          {!requested && <button className="primary-button" onClick={enableCamera}>Enable camera</button>}
+          {error && <p className="text-sm">Check camera permissions in your browser settings, then reload to try again.</p>}
+        </div>
         <div className="panel-section">
           <div className="section-label"><span>HOW MANY PHOTOS?</span></div>
           <div className="count-grid">{PHOTO_COUNTS.map(option => <button key={option} className={photoCount === option ? 'count-option selected' : 'count-option'} disabled={isCapturing} onClick={() => setPhotoCount(option)}><strong>{option}</strong><span>photos</span>{photoCount === option && <Check size={15} />}</button>)}</div>
