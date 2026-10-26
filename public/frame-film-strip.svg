@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="364" height="164" viewBox="0 0 364 164">
+  <defs>
+    <pattern id="dots" width="8.3" height="8.3" patternUnits="userSpaceOnUse">
+      <rect width="8.3" height="8.3" fill="#f7f4eb"/>
+      <path d="M4.15 2.9 5.4 4.15 4.15 5.4 2.9 4.15Z" fill="#b7b4aa"/>
+    </pattern>
+    <pattern id="sprockets" width="6" height="21" patternUnits="userSpaceOnUse" y="15">
+      <rect width="6" height="7.5" fill="#f7f4eb"/>
+    </pattern>
+  </defs>
+  <g fill="url(#dots)" stroke="#d7d4ca" stroke-width=".75">
+    <rect transform="translate(153 12)" width="58" height="36.5"/>
+    <rect transform="translate(153 64)" width="58" height="36.5"/>
+    <rect transform="translate(153 116)" width="58" height="36.5"/>
+  </g>
+  <g fill="url(#sprockets)">
+    <rect x="139" y="15" width="6" height="133.5"/>
+    <rect x="219" y="15" width="6" height="133.5"/>
+  </g>
+</svg>
