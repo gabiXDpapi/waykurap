@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --test hooks/usePhotoCapture.test.mjs lib/eyeTracking.test.mjs tests/capture-flow.mjs tests/export-photos.mjs tests/security-headers.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.48.0",

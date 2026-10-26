@@ -16,13 +16,12 @@ bun dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-The home page redirects to `/step-1` for capture; a completed capture opens `/step-2` for frames, orientation, and export. The pages live in `app/(booth)/step-1/page.tsx` and `app/(booth)/step-2/page.tsx`.
+The home page links to `/step-1` for capture; choose **Enable camera** to grant video access after reading the privacy notice. A completed capture opens `/step-2` for frames, orientation, and export.
 
-Photos and selections stay in memory during navigation. Reloading clears the session, and opening step 2 without photos redirects to step 1. Retake clears the photos and returns to step 1.
+Photos and selections stay in memory during navigation. Reloading clears the session, and opening step 2 without photos redirects to step 1. Retake clears the photos and returns to step 1. **End session** clears photos and returns home, releasing the camera; downloaded files remain on the device.
 
-Run the capture and routing regression checks with `node tests/capture-flow.mjs`.
+Run regression checks with `npm test`. Read [SECURITY.md](SECURITY.md) for privacy behavior, security limits, and the deployment checklist.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
 
