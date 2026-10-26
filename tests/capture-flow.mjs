@@ -75,6 +75,7 @@ async function main() {
   });
   const render = Page => renderToStaticMarkup(React.createElement(Page));
   const { default: BoothLayout } = load('app/(booth)/layout.tsx', {
+    '@/components/EndSession': { EndSession: () => null },
     '@/components/EyeLogo': { EyeLogo: () => null },
     '@/components/PhotoSession': { PhotoSessionProvider: ({ children }) => children },
   });
@@ -112,6 +113,13 @@ async function main() {
   await shutter.props.onClick();
   assert.deepEqual(navigation.pop(), ['push', '/step-2']);
   assert.equal(session.photos, captured);
+  const { EndSession } = load('components/EndSession.tsx', mocks);
+  const endSession = EndSession();
+  assert.equal(endSession.props.href, '/');
+  assert.equal(endSession.props.replace, true);
+  endSession.props.onClick();
+  assert.equal(session.photos.length, 0, 'Ending a session must clear photos');
+  session.photos = captured;
   assert.match(render(ReviewPage), /STEP 02 \/ MAKE IT YOURS/);
   assert.doesNotMatch(render(ReviewPage), /<video/);
   assert.equal((render(ReviewPage).match(/<img /g) || []).length, 4);
