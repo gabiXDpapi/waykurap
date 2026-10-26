@@ -2,7 +2,7 @@ import { useState, RefObject, useRef, useEffect } from "react";
 
 export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
   const [photos, setPhotos] = useState<string[]>([]);
-  const [countdown, setCountdown] = useState<number | null>(null);
+  const [countdown, setCountdown] = useState<number | "GET READY" | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
   const [showFlash, setShowFlash] = useState(false);
   const isMounted = useRef(true);
@@ -33,10 +33,13 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
     setIsCapturing(true);
     setPhotos([]);
 
+    setCountdown("GET READY");
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
     const newPhotos: string[] = [];
 
     for (let i = 0; i < count; i++) {
-      const timerDuration = i === 0 ? 5 : 3;
+      const timerDuration = i === 0 ? 10 : 5;
       for (let sec = timerDuration; sec > 0; sec--) {
         if (!isMounted.current) return;
         setCountdown(sec);

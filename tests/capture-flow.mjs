@@ -61,7 +61,7 @@ async function main() {
     react: { ...React, useEffect: effect => effect() },
     'next/navigation': { useRouter: () => router, redirect },
     '@/components/PhotoSession': { usePhotoSession: () => session },
-    '@/hooks/useCamera': { useCamera: () => ({ videoRef: { current: null }, stream: {}, error: '' }) },
+    '@/hooks/useCamera': { useCamera: () => ({ videoRef: { current: null }, stream: {}, error: '', requested: false, enableCamera() {} }) },
     '@/hooks/usePhotoCapture': { usePhotoCapture: () => ({ ...capture, handleTakePhoto: async () => result }) },
     '@/constants/config': { PHOTO_COUNTS: [3, 4, 5, 6] },
     '@/lib/exportPhotos': { exportPhotos() {} },
@@ -75,6 +75,7 @@ async function main() {
   });
   const render = Page => renderToStaticMarkup(React.createElement(Page));
   const { default: BoothLayout } = load('app/(booth)/layout.tsx', {
+    '@/components/EndSession': { EndSession: () => null },
     '@/components/EyeLogo': { EyeLogo: () => null },
     '@/components/PhotoSession': { PhotoSessionProvider: ({ children }) => children },
   });
@@ -101,6 +102,8 @@ async function main() {
   assert.equal(ReviewPage(), null);
   assert.deepEqual(navigation.pop(), ['replace', '/step-1']);
   assert.match(render(CapturePage), /STEP 01 \/ CAPTURE/);
+  assert.match(render(CapturePage), /Enable camera/);
+  assert.match(render(CapturePage), /not uploaded by this app/);
   const shutter = find(CapturePage(), node => node.props?.['aria-label'] === 'Take Photo');
   for (result of [undefined, captured.slice(0, 3)]) {
     await shutter.props.onClick();
@@ -110,6 +113,13 @@ async function main() {
   await shutter.props.onClick();
   assert.deepEqual(navigation.pop(), ['push', '/step-2']);
   assert.equal(session.photos, captured);
+  const { EndSession } = load('components/EndSession.tsx', mocks);
+  const endSession = EndSession();
+  assert.equal(endSession.props.href, '/');
+  assert.equal(endSession.props.replace, true);
+  endSession.props.onClick();
+  assert.equal(session.photos.length, 0, 'Ending a session must clear photos');
+  session.photos = captured;
   assert.match(render(ReviewPage), /STEP 02 \/ MAKE IT YOURS/);
   assert.doesNotMatch(render(ReviewPage), /<video/);
   assert.equal((render(ReviewPage).match(/<img /g) || []).length, 4);
@@ -130,20 +140,36 @@ async function main() {
   let resolveCamera;
   let stopped = 0;
   let cleanup;
+  let requested = false;
+  let cameraRequests = 0;
   const { useCamera: runCameraHook } = load('hooks/useCamera.ts', {
     react: {
-      useState: initial => [initial, () => {}],
+      useState: initial => typeof initial === 'boolean' ? [requested, value => { requested = value; }] : [initial, () => {}],
       useRef: current => ({ current }),
       useEffect: effect => { cleanup = effect(); },
     },
   }, {
-    navigator: { mediaDevices: { getUserMedia: () => new Promise(resolve => { resolveCamera = resolve; }) } },
+    navigator: { mediaDevices: { getUserMedia: constraints => {
+      cameraRequests++;
+      assert.equal(constraints.video, true);
+      assert.equal(constraints.audio, false);
+      return new Promise(resolve => { resolveCamera = resolve; });
+    } } },
   });
+  const camera = runCameraHook();
+  assert.equal(cameraRequests, 0, 'Opening the booth must not request the camera');
+  camera.enableCamera();
   runCameraHook();
+  assert.equal(cameraRequests, 1);
   cleanup();
   resolveCamera({ getTracks: () => [{ stop() { stopped++; } }] });
   await new Promise(setImmediate);
   assert.equal(stopped, 1);
+  runCameraHook();
+  resolveCamera({ getTracks: () => [{ stop() { stopped++; } }] });
+  await new Promise(setImmediate);
+  cleanup();
+  assert.equal(stopped, 2, 'Leaving an active camera must stop its tracks');
   console.log('Capture, routing, empty-session redirects, retake, cancellation, and camera cleanup checks passed.');
 }
 

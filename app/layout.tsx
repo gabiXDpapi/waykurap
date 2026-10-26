@@ -2,7 +2,7 @@ import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Way Kurap — Make a Memory',
+  title: 'Way Kurap',
   description: 'A nostalgic digital photo booth for making memories.',
   icons: {
     icon: { url: '/way-kurap-logo.svg', type: 'image/svg+xml' },
