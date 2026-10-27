@@ -9,6 +9,18 @@ button { font: inherit; cursor: pointer; }
 .topbar .brand-lockup { text-decoration: none; }
 .topbar .brand-lockup:focus-visible { outline: 3px solid var(--red); outline-offset: 5px; }
 .booth-app { min-height: 100vh; background: radial-gradient(circle at 20% 10%, rgba(255,255,255,.7), transparent 30%), var(--cream); }
+.booth-footer { padding-top: 24px; }
+.session-end { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 16px 24px 32px; text-align: center; }
+.session-end .text-button { width: fit-content; min-height: 44px; margin: 0; padding: 10px 20px; justify-content: center; border: 1px solid var(--dark-red); text-decoration: none; font-size: 12px; }
+.session-end .text-button:hover { background: var(--paper); }
+.session-end .text-button:focus-visible { outline: 3px solid var(--red); outline-offset: 4px; }
+.session-end p { max-width: 60ch; margin: 0; font-size: 12px; line-height: 1.6; }
+.booth-creator { display: flex; justify-content: flex-end; border-top: 1px solid var(--line); padding: 16px 5vw 24px; }
+.booth-creator > div { padding: 0; justify-content: flex-end; gap: 8px 12px; }
+.booth-footer .booth-creator p { font-size: 12px; text-align: right; }
+.booth-creator nav { gap: 4px; }
+.booth-creator nav a { width: 32px; height: 32px; border: 0; }
+.booth-creator svg { width: 16px; height: 16px; }
 .topbar { height: 64px; display: flex; align-items: center; justify-content: space-between; padding: 0 5.5vw; background: var(--paper); border-bottom: 1px solid var(--line); }
 .brand-lockup { display: flex; align-items: center; gap: 14px; }.brand-mark { width: 42px; height: 42px; display: block; flex-shrink: 0; background: #1f1a1b; transform: rotate(-4deg); box-shadow: 4px 4px 0 var(--ink); }.eyebrow,.kicker,.section-label,.camera-topline,.review-topline,.site-footer,.panel-footer { font-size: 10px; font-weight: 800; letter-spacing: .18em; }.eyebrow { margin: 0 0 2px; color: var(--red); }.brand-lockup h1 { margin: 0; color: var(--red); font-family: Georgia, serif; font-size: 30px; font-style: italic; font-weight: 900; line-height: 1; letter-spacing: -.04em; }.top-actions { display: flex; align-items: center; gap: 9px; font-size: 12px; font-weight: 700; }.status-dot { width: 8px; height: 8px; border-radius: 50%; background: #38a35e; box-shadow: 0 0 0 4px #d9f0de; }.icon-button { border: 0; background: transparent; padding: 8px; color: var(--ink); }.checker-rule { height: 36px; background: repeating-conic-gradient(#fff 0 25%, var(--red) 0 50%) 50% / 36px 36px; opacity: .85; }
 .workspace { max-width: 1150px; margin: 0 auto; padding: 10px 5vw 20px; display: grid; grid-template-columns: minmax(0, 1fr) 320px; gap: 40px; }.stage-heading { display: flex; justify-content: space-between; align-items: end; margin-bottom: 12px; }.kicker { color: var(--red); margin: 0 0 8px; }.stage-heading h2 { margin: 0; font-family: Georgia, serif; font-size: clamp(34px, 4vw, 55px); line-height: .95; letter-spacing: -.07em; }.step-pills { display: flex; align-items: center; gap: 8px; padding-bottom: 8px; }.step-pills span { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--ink); border-radius: 50%; font-size: 12px; font-weight: 800; }.step-pills .active { color: white; background: var(--red); border-color: var(--red); }.step-pills .done { color: white; background: var(--ink); }.step-pills i { width: 32px; height: 1px; background: var(--ink); }
