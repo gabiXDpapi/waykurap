@@ -13,6 +13,7 @@ function setup() {
   const updates = []
   const timers = []
   const shots = []
+  const drawing = []
   let now = 0
   let cleanup
   const exports = {}
@@ -30,14 +31,18 @@ function setup() {
       useEffect: effect => { cleanup = effect() },
     }),
     document: { createElement: () => ({
-      getContext: () => ({ drawImage: () => shots.push(now) }),
+      getContext: () => ({
+        translate: (...args) => drawing.push(['translate', ...args]),
+        scale: (...args) => drawing.push(['scale', ...args]),
+        drawImage: (_video, ...args) => { drawing.push(['drawImage', ...args]); shots.push(now) },
+      }),
       toDataURL: () => `photo-${shots.length}`,
     }) },
     setTimeout: (callback, delay) => timers.push({ callback, time: now + delay }),
   })
   const capture = exports.usePhotoCapture({ current: { videoWidth: 640, videoHeight: 480 } })
   return {
-    capture, states, updates, shots,
+    capture, states, updates, shots, drawing,
     unmount: () => cleanup(),
     async drain() {
       while (timers.length) {
@@ -59,6 +64,9 @@ test('shows GET READY, counts 10 seconds for the first shot and 5 for each remai
   await session.drain()
   assert.deepEqual(Array.from(await result), ['photo-1', 'photo-2', 'photo-3'])
   assert.deepEqual(session.shots, [11000, 16500, 22000])
+  assert.deepEqual(session.drawing, Array.from({ length: 3 }, () => [
+    ['translate', 640, 0], ['scale', -1, 1], ['drawImage', 0, 0, 640, 480],
+  ]).flat())
   assert.deepEqual(session.updates.filter(update => update.index === 1).map(update => update.value), [
     'GET READY', 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, null,
     5, 4, 3, 2, 1, null, 5, 4, 3, 2, 1, null,

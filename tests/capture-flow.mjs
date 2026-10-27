@@ -32,7 +32,7 @@ async function main() {
   }, {
     setTimeout: callback => callback(),
     document: { createElement: () => ({
-      getContext: () => ({ drawImage() {} }),
+      getContext: () => ({ translate() {}, scale() {}, drawImage() {} }),
       toDataURL: () => 'data:image/png;base64,captured',
     }) },
   });
@@ -102,6 +102,7 @@ async function main() {
   assert.equal(ReviewPage(), null);
   assert.deepEqual(navigation.pop(), ['replace', '/step-1']);
   assert.match(render(CapturePage), /STEP 01 \/ CAPTURE/);
+  assert.ok(find(CapturePage(), node => node.type === 'video').props.className.split(' ').includes('-scale-x-100'));
   assert.match(render(CapturePage), /Enable camera/);
   assert.match(render(CapturePage), /not uploaded by this app/);
   const shutter = find(CapturePage(), node => node.props?.['aria-label'] === 'Take Photo');
