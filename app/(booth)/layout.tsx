@@ -18,10 +18,14 @@ export default function BoothLayout({ children }: { children: React.ReactNode })
         <div className="checker-rule" aria-hidden="true" />
 
         {children}
-        <footer className="px-6 pb-6 text-center text-sm">
-          <EndSession />
-          <p>End session clears your photos from the booth and turns off the camera. Files you downloaded stay on your device.</p>
-          <CreatorCredit />
+        <footer className="booth-footer">
+          <div className="session-end">
+            <EndSession />
+            <p>End session clears your photos from the booth and turns off the camera. Files you downloaded stay on your device.</p>
+          </div>
+          <div className="booth-creator">
+            <CreatorCredit />
+          </div>
         </footer>
       </main>
     </PhotoSessionProvider>
