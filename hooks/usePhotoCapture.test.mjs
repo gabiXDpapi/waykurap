@@ -65,7 +65,7 @@ test('shows GET READY, counts 10 seconds for the first shot and 5 for each remai
   assert.deepEqual(Array.from(await result), ['photo-1', 'photo-2', 'photo-3'])
   assert.deepEqual(session.shots, [11000, 16500, 22000])
   assert.deepEqual(session.drawing, Array.from({ length: 3 }, () => [
-    ['translate', 640, 0], ['scale', -1, 1], ['drawImage', 0, 0, 640, 480],
+    ['drawImage', 0, 0, 640, 480],
   ]).flat())
   assert.deepEqual(session.updates.filter(update => update.index === 1).map(update => update.value), [
     'GET READY', 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, null,

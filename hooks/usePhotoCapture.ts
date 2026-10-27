@@ -21,8 +21,6 @@ export function usePhotoCapture(videoRef: RefObject<HTMLVideoElement | null>) {
       canvas.height = videoRef.current.videoHeight;
       const ctx = canvas.getContext("2d");
       if (ctx) {
-        ctx.translate(canvas.width, 0);
-        ctx.scale(-1, 1);
         ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
         return canvas.toDataURL("image/png");
       }
