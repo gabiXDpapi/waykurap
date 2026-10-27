@@ -1,5 +1,6 @@
 ﻿import Link from 'next/link'
 import { EyeLogo } from '@/components/EyeLogo'
+import { CreatorCredit } from '@/components/CreatorCredit'
 import Image from 'next/image'
 import { Camera } from 'lucide-react'
 import styles from './page.module.css'
@@ -87,7 +88,10 @@ export default function Page() {
           <div className={styles.footerStart}><p className={styles.eyebrow}>Start</p><p>Ready to say cheese?</p><Link className={styles.button} href="/step-1">Open the booth</Link></div>
         </div>
         <div className={styles.divider} aria-hidden="true" />
-        <p className={styles.copyright}>© 2026 Way Kurap</p>
+        <div className={styles.footerBottom}>
+          <p className={styles.copyright}>© 2026 Way Kurap</p>
+          <CreatorCredit />
+        </div>
       </footer>
     </div>
   )

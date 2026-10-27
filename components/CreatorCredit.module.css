@@ -1,0 +1,7 @@
+.credit { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px 24px; padding: 24px; color: var(--ink); }
+.credit p { margin: 0; font: 14px/1.6 Georgia, serif; }
+.credit strong { color: var(--dark-red); }
+.links { display: flex; gap: 8px; }
+.links a { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid currentColor; color: var(--ink); }
+.links a:hover { color: var(--dark-red); background: var(--paper); }
+.links a:focus-visible { outline: 3px solid var(--red); outline-offset: 4px; }
