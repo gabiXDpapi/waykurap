@@ -44,7 +44,7 @@ export default function Page() {
                 autoPlay
                 playsInline
                 muted
-                className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-1000 ${stream ? 'opacity-100' : 'opacity-0'}`}
+                className={`absolute inset-0 w-full h-full object-cover -scale-x-100 transition-opacity duration-1000 ${stream ? 'opacity-100' : 'opacity-0'}`}
               />
 
               <div className={`absolute inset-0 bg-white pointer-events-none transition-opacity duration-75 z-20 ${showFlash ? 'opacity-100' : 'opacity-0'}`} />

@@ -118,7 +118,7 @@ export function CameraPreview({ videoRef, stream, error, photos = [], isComplete
           autoPlay
           playsInline
           muted
-          className={`w-full h-full object-cover transition-opacity duration-1000 ${stream ? 'opacity-100' : 'opacity-0'} ${isComplete && photos.length > 0 ? 'hidden' : 'block'}`}
+          className={`w-full h-full object-cover -scale-x-100 transition-opacity duration-1000 ${stream ? 'opacity-100' : 'opacity-0'} ${isComplete && photos.length > 0 ? 'hidden' : 'block'}`}
         />
 
         {/* Capture Flash Overlay */}
