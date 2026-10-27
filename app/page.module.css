@@ -85,12 +85,12 @@
   .footerGrid { gap: 28px; }
 }
 @media (max-width: 700px) {
-  .landing .header { grid-template-columns: minmax(0, 1fr) auto; gap: 0 12px; }
+  .landing .header { grid-template-columns: minmax(0, 1fr) auto; gap: 0 12px; border-bottom: 0; }
   .header > a:first-child { gap: 8px; }
   .header h1 { font-size: clamp(18px, 5vw, 30px); white-space: nowrap; }
   .header svg { width: 32px; height: 32px; }
   .header .button { grid-column: 2; min-height: 44px; padding: 8px; font-size: 9px; letter-spacing: .08em; white-space: nowrap; }
-  .navigation { grid-column: 1 / -1; grid-row: 3; flex-wrap: wrap; gap: 16px 32px; padding: 16px 0; }
+  .navigation { grid-column: 1 / -1; grid-row: 3; flex-wrap: wrap; gap: 16px 32px; margin: 0 -5.5vw; padding: 16px 5.5vw; background: var(--cream); }
   .hero { grid-template-columns: 1fr; gap: 52px; padding-top: 52px; padding-bottom: 64px; }
   .hero h2 { font-size: clamp(39px, 8.8vw, 60px); }
   .heroArt { width: min(85%, 360px); justify-self: center; }
