@@ -57,7 +57,11 @@ async function main() {
   };
   const redirect = path => { throw new Error(`redirect:${path}`); };
   let result = captured;
+  const { CreatorCredit } = load('components/CreatorCredit.tsx', {
+    './CreatorCredit.module.css': { default: {} },
+  });
   const mocks = {
+    '@/components/CreatorCredit': { CreatorCredit },
     react: { ...React, useEffect: effect => effect() },
     'next/navigation': { useRouter: () => router, redirect },
     '@/components/PhotoSession': { usePhotoSession: () => session },
@@ -75,11 +79,16 @@ async function main() {
   });
   const render = Page => renderToStaticMarkup(React.createElement(Page));
   const { default: BoothLayout } = load('app/(booth)/layout.tsx', {
+    '@/components/CreatorCredit': { CreatorCredit },
     '@/components/EndSession': { EndSession: () => null },
     '@/components/EyeLogo': { EyeLogo: () => null },
     '@/components/PhotoSession': { PhotoSessionProvider: ({ children }) => children },
   });
   for (const header of [render(HomePage), render(BoothLayout)]) {
+    assert.match(header, /Created by <strong>Gabriel Mosquera<\/strong>/);
+    assert.match(header, /href="mailto:mosqueragabriel99@gmail.com"/);
+    assert.match(header, /href="https:\/\/github.com\/gabiXDpapi" target="_blank" rel="noopener noreferrer"/);
+    assert.match(header, /href="https:\/\/www.linkedin.com\/in\/gabriel-mosquera-0730112a1\/" target="_blank" rel="noopener noreferrer"/);
     assert.match(header, /<a[^>]*aria-label="Way Kurap home"[^>]*href="\/"[^>]*><h1>Way Kurap<\/h1><\/a>/);
   }
   function find(node, predicate) {

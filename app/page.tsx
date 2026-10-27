@@ -1,5 +1,6 @@
 ﻿import Link from 'next/link'
 import { EyeLogo } from '@/components/EyeLogo'
+import { CreatorCredit } from '@/components/CreatorCredit'
 import Image from 'next/image'
 import { Camera } from 'lucide-react'
 import styles from './page.module.css'
@@ -88,6 +89,7 @@ export default function Page() {
         </div>
         <div className={styles.divider} aria-hidden="true" />
         <p className={styles.copyright}>© 2026 Way Kurap</p>
+        <CreatorCredit />
       </footer>
     </div>
   )
