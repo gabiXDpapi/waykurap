@@ -8,7 +8,7 @@
 }
 .landing a { text-decoration: none; }
 .landing a:focus-visible { outline: 3px solid var(--red); outline-offset: 5px; }
-.header { gap: 24px; }
+.landing .header { gap: 24px; }
 .navigation { display: flex; gap: 32px; }
 .navigation a, .button, .eyebrow, .finePrint, .landing h3, .tagline, .copyright {
   font-size: 11px; font-weight: 800; letter-spacing: .16em; text-transform: uppercase;
@@ -83,7 +83,7 @@
   .footerGrid { gap: 28px; }
 }
 @media (max-width: 700px) {
-  .header { height: auto; min-height: 80px; flex-wrap: wrap; padding-top: 16px; padding-bottom: 16px; gap: 20px 12px; }
+  .landing .header { height: auto; min-height: 80px; flex-wrap: wrap; padding-top: 16px; padding-bottom: 16px; gap: 20px 12px; }
   .header .button { padding: 10px; font-size: 9px; }
   .navigation { order: 3; width: 100%; justify-content: center; gap: 32px; }
   .hero { grid-template-columns: 1fr; gap: 52px; padding-top: 52px; padding-bottom: 64px; }
