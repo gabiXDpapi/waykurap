@@ -21,7 +21,7 @@ export default function BoothLayout({ children }: { children: React.ReactNode })
         <footer className="booth-footer">
           <div className="session-end">
             <EndSession />
-            <p>End session clears your photos from the booth and turns off the camera. Files you downloaded stay on your device.</p>
+            <p>End session clears your photos and turns off the camera. Choose Enable camera on the capture screen to start again. Files you downloaded stay on your device.</p>
           </div>
           <div className="booth-creator">
             <CreatorCredit />

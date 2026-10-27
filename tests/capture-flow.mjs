@@ -48,6 +48,7 @@ async function main() {
   const session = {
     photos: [], photoCount: 4, selectedFrame: 'Film Strip', isVertical: true,
     setPhotos(photos) { session.photos = photos; },
+    endSession() { session.photos = []; },
     setPhotoCount() {}, setSelectedFrame() {}, setIsVertical() {},
   };
   const navigation = [];
@@ -124,10 +125,13 @@ async function main() {
   assert.equal(session.photos, captured);
   const { EndSession } = load('components/EndSession.tsx', mocks);
   const endSession = EndSession();
-  assert.equal(endSession.props.href, '/');
-  assert.equal(endSession.props.replace, true);
+  assert.equal(endSession.type, 'button');
+  assert.equal(endSession.props.type, 'button');
   endSession.props.onClick();
   assert.equal(session.photos.length, 0, 'Ending a session must clear photos');
+  assert.deepEqual(navigation.pop(), ['replace', '/step-1']);
+  endSession.props.onClick();
+  assert.deepEqual(navigation.pop(), ['replace', '/step-1'], 'Ending on capture stays on capture');
   session.photos = captured;
   assert.match(render(ReviewPage), /STEP 02 \/ MAKE IT YOURS/);
   assert.doesNotMatch(render(ReviewPage), /<video/);
@@ -179,6 +183,49 @@ async function main() {
   await new Promise(setImmediate);
   cleanup();
   assert.equal(stopped, 2, 'Leaving an active camera must stop its tracks');
+
+  const providerState = [];
+  let stateIndex = 0;
+  const { PhotoSessionProvider } = load('components/PhotoSession.tsx', {
+    react: {
+      ...React,
+      useState(initial) {
+        const index = stateIndex++;
+        if (!(index in providerState)) providerState[index] = initial;
+        return [providerState[index], value => {
+          providerState[index] = typeof value === 'function' ? value(providerState[index]) : value;
+        }];
+      },
+    },
+    '@/constants/config': { PHOTO_COUNTS: [3, 4, 5] },
+  });
+  const renderProvider = () => {
+    stateIndex = 0;
+    return PhotoSessionProvider({ children: null });
+  };
+  let provider = renderProvider();
+  provider.props.value.setPhotos(captured);
+  provider = renderProvider();
+  assert.equal(provider.props.value.photos.length, 4);
+  const previousKey = provider.key;
+  provider.props.value.endSession();
+  provider = renderProvider();
+  assert.equal(provider.props.value.photos.length, 0);
+  assert.notEqual(provider.key, previousKey, 'Ending must remount the booth to clean up camera and countdown hooks');
+  requested = false;
+  const requestsBeforeReset = cameraRequests;
+  const freshCamera = runCameraHook();
+  assert.equal(freshCamera.requested, false);
+  assert.equal(freshCamera.stream, null);
+  assert.equal(freshCamera.error, '');
+  assert.equal(cameraRequests, requestsBeforeReset, 'A fresh session must wait for Enable camera');
+  freshCamera.enableCamera();
+  runCameraHook();
+  assert.equal(cameraRequests, requestsBeforeReset + 1, 'The camera can be enabled for another session');
+  resolveCamera({ getTracks: () => [{ stop() { stopped++; } }] });
+  await new Promise(setImmediate);
+  cleanup();
+  assert.equal(stopped, 3);
   console.log('Capture, routing, empty-session redirects, retake, cancellation, and camera cleanup checks passed.');
 }
 
