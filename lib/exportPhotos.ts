@@ -24,6 +24,7 @@ export async function renderPhotos(photos: string[], selectedFrame: string = "Po
   // Coordinates are the bottom-right edge of the lockup, in the current frame.
   const drawWatermark = (ctx: CanvasRenderingContext2D, right: number, bottom: number, onPhoto = false) => {
     ctx.save();
+    ctx.globalAlpha = 0.65;
     const size = 22 * scale;
     const gap = 6 * scale;
     ctx.font = `600 ${14 * scale}px Arial, Helvetica, sans-serif`;

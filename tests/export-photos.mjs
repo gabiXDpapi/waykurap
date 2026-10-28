@@ -15,6 +15,7 @@ for (const frame of ['No Frame', 'Polaroid', 'Film Strip']) {
     const holes = [];
     const draws = [];
     const marks = [];
+    const logoOpacities = [];
     const texts = [];
     const cutouts = [];
     const scale = width / 400;
@@ -24,11 +25,11 @@ for (const frame of ['No Frame', 'Polaroid', 'Film Strip']) {
       fillRect(...rect) { fills.push({ rect, color: this.fillStyle }); },
       fill() { holes.push(this.globalCompositeOperation); },
       drawImage(img, ...rect) {
-        if (img.source === '/eye-logo.svg') marks.push(rect);
+        if (img.source === '/eye-logo.svg') { marks.push(rect); logoOpacities.push(this.globalAlpha); }
         else draws.push({ rect, mode: this.globalCompositeOperation });
       },
       measureText() { return { width: 65 * scale }; },
-      fillText(text, x, y) { texts.push({ text, x, y, color: this.fillStyle }); },
+      fillText(text, x, y) { texts.push({ text, x, y, color: this.fillStyle, opacity: this.globalAlpha }); },
       strokeText() {},
       save() {}, restore() {}, translate() {}, rotate() {},
       strokeRect() {}, beginPath() {}, roundRect(...rect) { cutouts.push(rect); },
@@ -56,6 +57,8 @@ for (const frame of ['No Frame', 'Polaroid', 'Film Strip']) {
     assert.equal(marks.length, 1, 'One eye logo per strip');
     assert.equal(texts.length, 1, 'One wordmark per strip');
     assert.equal(texts[0].text, 'Waykurap');
+    assert.equal(texts[0].opacity, 0.65, 'Wordmark stays subtle');
+    assert.deepEqual(logoOpacities, [0.65], 'Eye logo matches the wordmark opacity');
     const [x, y, w, h] = marks[0];
     const [px, py, pw, ph] = draws.at(-1).rect;
     const right = texts[0].x;
