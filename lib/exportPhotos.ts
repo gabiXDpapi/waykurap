@@ -25,16 +25,17 @@ export async function renderPhotos(photos: string[], selectedFrame: string = "Po
   const drawWatermark = (ctx: CanvasRenderingContext2D, right: number, bottom: number, onPhoto = false) => {
     ctx.save();
     ctx.globalAlpha = 0.65;
-    const size = 22 * scale;
-    const gap = 6 * scale;
-    ctx.font = `600 ${14 * scale}px Arial, Helvetica, sans-serif`;
+    const watermarkScale = scale * 0.75;
+    const size = 22 * watermarkScale;
+    const gap = 6 * watermarkScale;
+    ctx.font = `600 ${14 * watermarkScale}px Arial, Helvetica, sans-serif`;
     ctx.textAlign = "right";
     ctx.textBaseline = "middle";
     ctx.fillStyle = isPolaroid ? "#1F1A1B" : "#FFF8E7";
     if (onPhoto) {
       ctx.shadowColor = "#1F1A1B";
-      ctx.shadowBlur = 3 * scale;
-      ctx.lineWidth = 2 * scale;
+      ctx.shadowBlur = 3 * watermarkScale;
+      ctx.lineWidth = 2 * watermarkScale;
       ctx.strokeStyle = "#1F1A1B";
       ctx.strokeText("Waykurap", right, bottom - size / 2);
     }
