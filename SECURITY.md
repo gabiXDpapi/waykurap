@@ -1,6 +1,6 @@
 # Security and privacy
 
-Photos are captured, held in memory, and exported in the browser; the app does not upload them or request microphone access. Camera access starts only after choosing **Enable camera**. Leaving capture stops its camera tracks, including streams granted after navigation. **End session** clears photos and returns home; downloaded files remain on the device.
+Photos are captured, held in memory, and exported in the browser; the app does not upload them or request microphone access. Camera access starts only after choosing **Enable camera**. Leaving capture stops its camera tracks, including streams granted after navigation. **End session** clears photos, cancels pending captures, and stops camera tracks by resetting the booth, even when already on the capture screen. It returns to capture with **Enable camera** available again; downloaded files remain on the device.
 
 Browser headers restrict device permissions, prevent framing and plugin embedding, and limit form targets, base URLs, MIME sniffing, and referrer disclosure. The CSP is a baseline policy, not script-injection protection: validate a strict script policy with Next.js before introducing third-party scripts or user-supplied HTML. Do not add session replay to photo screens or log photo data.
 

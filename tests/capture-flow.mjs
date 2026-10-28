@@ -32,7 +32,7 @@ async function main() {
   }, {
     setTimeout: callback => callback(),
     document: { createElement: () => ({
-      getContext: () => ({ drawImage() {} }),
+      getContext: () => ({ translate() {}, scale() {}, drawImage() {} }),
       toDataURL: () => 'data:image/png;base64,captured',
     }) },
   });
@@ -48,6 +48,7 @@ async function main() {
   const session = {
     photos: [], photoCount: 4, selectedFrame: 'Film Strip', isVertical: true,
     setPhotos(photos) { session.photos = photos; },
+    endSession() { session.photos = []; },
     setPhotoCount() {}, setSelectedFrame() {}, setIsVertical() {},
   };
   const navigation = [];
@@ -57,14 +58,25 @@ async function main() {
   };
   const redirect = path => { throw new Error(`redirect:${path}`); };
   let result = captured;
+  const { CreatorCredit } = load('components/CreatorCredit.tsx', {
+    './CreatorCredit.module.css': { default: {} },
+  });
+  const { PhotoPreview } = load('components/PhotoPreview.tsx', {
+    react: { ...React, useEffect() {} },
+    '@/lib/exportPhotos': { renderPhotos() {} },
+  });
+  const reviewUpdates = [];
+  let exportFails = false;
   const mocks = {
-    react: { ...React, useEffect: effect => effect() },
+    '@/components/PhotoPreview': { PhotoPreview },
+    '@/components/CreatorCredit': { CreatorCredit },
+    react: { ...React, useEffect: effect => effect(), useState: initial => [initial, value => reviewUpdates.push(value)] },
     'next/navigation': { useRouter: () => router, redirect },
     '@/components/PhotoSession': { usePhotoSession: () => session },
     '@/hooks/useCamera': { useCamera: () => ({ videoRef: { current: null }, stream: {}, error: '', requested: false, enableCamera() {} }) },
     '@/hooks/usePhotoCapture': { usePhotoCapture: () => ({ ...capture, handleTakePhoto: async () => result }) },
     '@/constants/config': { PHOTO_COUNTS: [3, 4, 5, 6] },
-    '@/lib/exportPhotos': { exportPhotos() {} },
+    '@/lib/exportPhotos': { async exportPhotos() { if (exportFails) throw new Error('image failed'); } },
   };
   const { default: CapturePage } = load('app/(booth)/step-1/page.tsx', mocks);
   const { default: ReviewPage } = load('app/(booth)/step-2/page.tsx', mocks);
@@ -75,11 +87,16 @@ async function main() {
   });
   const render = Page => renderToStaticMarkup(React.createElement(Page));
   const { default: BoothLayout } = load('app/(booth)/layout.tsx', {
+    '@/components/CreatorCredit': { CreatorCredit },
     '@/components/EndSession': { EndSession: () => null },
     '@/components/EyeLogo': { EyeLogo: () => null },
     '@/components/PhotoSession': { PhotoSessionProvider: ({ children }) => children },
   });
   for (const header of [render(HomePage), render(BoothLayout)]) {
+    assert.match(header, /Created by <strong>Gabriel Mosquera<\/strong>/);
+    assert.match(header, /href="mailto:mosqueragabriel99@gmail.com"/);
+    assert.match(header, /href="https:\/\/github.com\/gabiXDpapi" target="_blank" rel="noopener noreferrer"/);
+    assert.match(header, /href="https:\/\/www.linkedin.com\/in\/gabriel-mosquera-0730112a1\/" target="_blank" rel="noopener noreferrer"/);
     assert.match(header, /<a[^>]*aria-label="Way Kurap home"[^>]*href="\/"[^>]*><h1>Way Kurap<\/h1><\/a>/);
   }
   function find(node, predicate) {
@@ -102,6 +119,7 @@ async function main() {
   assert.equal(ReviewPage(), null);
   assert.deepEqual(navigation.pop(), ['replace', '/step-1']);
   assert.match(render(CapturePage), /STEP 01 \/ CAPTURE/);
+  assert.ok(find(CapturePage(), node => node.type === 'video').props.className.split(' ').includes('-scale-x-100'));
   assert.match(render(CapturePage), /Enable camera/);
   assert.match(render(CapturePage), /not uploaded by this app/);
   const shutter = find(CapturePage(), node => node.props?.['aria-label'] === 'Take Photo');
@@ -115,14 +133,62 @@ async function main() {
   assert.equal(session.photos, captured);
   const { EndSession } = load('components/EndSession.tsx', mocks);
   const endSession = EndSession();
-  assert.equal(endSession.props.href, '/');
-  assert.equal(endSession.props.replace, true);
+  assert.equal(endSession.type, 'button');
+  assert.equal(endSession.props.type, 'button');
   endSession.props.onClick();
   assert.equal(session.photos.length, 0, 'Ending a session must clear photos');
+  assert.deepEqual(navigation.pop(), ['replace', '/step-1']);
+  endSession.props.onClick();
+  assert.deepEqual(navigation.pop(), ['replace', '/step-1'], 'Ending on capture stays on capture');
   session.photos = captured;
   assert.match(render(ReviewPage), /STEP 02 \/ MAKE IT YOURS/);
   assert.doesNotMatch(render(ReviewPage), /<video/);
-  assert.equal((render(ReviewPage).match(/<img /g) || []).length, 4);
+  assert.match(render(ReviewPage), /Preparing your photos/);
+  const preview = find(ReviewPage(), node => node.type === PhotoPreview);
+  assert.equal(preview.props.photos, captured);
+  assert.equal(preview.props.selectedFrame, session.selectedFrame);
+  assert.equal(preview.props.isVertical, session.isVertical);
+  const exportButton = find(ReviewPage(), node => node.props?.className === 'primary-button export');
+  reviewUpdates.length = 0;
+  await exportButton.props.onClick();
+  assert.deepEqual(reviewUpdates, ['', true, false], 'Export clears errors and resets the busy state');
+  reviewUpdates.length = 0;
+  exportFails = true;
+  await exportButton.props.onClick();
+  assert.deepEqual(reviewUpdates, ['', true, 'Could not export your photos. Please try again.', false], 'Failed export offers a retry and resets the busy state');
+
+  let previewResult = null;
+  let previewEffect;
+  let finishPreview;
+  let failPreview;
+  const { PhotoPreview: AsyncPreview } = load('components/PhotoPreview.tsx', {
+    react: {
+      ...React,
+      useState: () => [previewResult, value => { previewResult = value; }],
+      useEffect: effect => { previewEffect = effect; },
+    },
+    '@/lib/exportPhotos': { renderPhotos: (...args) => {
+      assert.deepEqual(args, [captured, session.selectedFrame, session.isVertical]);
+      return new Promise((resolve, reject) => { finishPreview = resolve; failPreview = reject; });
+    } },
+  });
+  assert.equal(AsyncPreview(preview.props).props.role, 'status');
+  let cancelPreview = previewEffect();
+  finishPreview('data:image/png;base64,watermarked');
+  await new Promise(setImmediate);
+  const renderedPreview = AsyncPreview(preview.props);
+  assert.equal(renderedPreview.props.src, 'data:image/png;base64,watermarked', 'Preview uses the shared export renderer');
+  assert.match(renderedPreview.props.alt, /Waykurap eye logo watermark/);
+  cancelPreview();
+  cancelPreview = previewEffect();
+  cancelPreview();
+  finishPreview('stale-frame');
+  await new Promise(setImmediate);
+  assert.equal(previewResult.src, 'data:image/png;base64,watermarked', 'A stale render cannot replace the current preview');
+  previewEffect();
+  failPreview(new Error('image failed'));
+  await new Promise(setImmediate);
+  assert.equal(AsyncPreview(preview.props).props.role, 'alert');
   // Returning to capture does not erase the session needed by browser Forward.
   render(CapturePage);
   assert.equal(session.photos, captured);
@@ -170,6 +236,49 @@ async function main() {
   await new Promise(setImmediate);
   cleanup();
   assert.equal(stopped, 2, 'Leaving an active camera must stop its tracks');
+
+  const providerState = [];
+  let stateIndex = 0;
+  const { PhotoSessionProvider } = load('components/PhotoSession.tsx', {
+    react: {
+      ...React,
+      useState(initial) {
+        const index = stateIndex++;
+        if (!(index in providerState)) providerState[index] = initial;
+        return [providerState[index], value => {
+          providerState[index] = typeof value === 'function' ? value(providerState[index]) : value;
+        }];
+      },
+    },
+    '@/constants/config': { PHOTO_COUNTS: [3, 4, 5] },
+  });
+  const renderProvider = () => {
+    stateIndex = 0;
+    return PhotoSessionProvider({ children: null });
+  };
+  let provider = renderProvider();
+  provider.props.value.setPhotos(captured);
+  provider = renderProvider();
+  assert.equal(provider.props.value.photos.length, 4);
+  const previousKey = provider.key;
+  provider.props.value.endSession();
+  provider = renderProvider();
+  assert.equal(provider.props.value.photos.length, 0);
+  assert.notEqual(provider.key, previousKey, 'Ending must remount the booth to clean up camera and countdown hooks');
+  requested = false;
+  const requestsBeforeReset = cameraRequests;
+  const freshCamera = runCameraHook();
+  assert.equal(freshCamera.requested, false);
+  assert.equal(freshCamera.stream, null);
+  assert.equal(freshCamera.error, '');
+  assert.equal(cameraRequests, requestsBeforeReset, 'A fresh session must wait for Enable camera');
+  freshCamera.enableCamera();
+  runCameraHook();
+  assert.equal(cameraRequests, requestsBeforeReset + 1, 'The camera can be enabled for another session');
+  resolveCamera({ getTracks: () => [{ stop() { stopped++; } }] });
+  await new Promise(setImmediate);
+  cleanup();
+  assert.equal(stopped, 3);
   console.log('Capture, routing, empty-session redirects, retake, cancellation, and camera cleanup checks passed.');
 }
 

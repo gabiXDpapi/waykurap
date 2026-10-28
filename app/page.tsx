@@ -1,5 +1,6 @@
 ﻿import Link from 'next/link'
 import { EyeLogo } from '@/components/EyeLogo'
+import { CreatorCredit } from '@/components/CreatorCredit'
 import Image from 'next/image'
 import { Camera } from 'lucide-react'
 import styles from './page.module.css'
@@ -10,10 +11,10 @@ export default function Page() {
       <a className={styles.skipLink} href="#main">Skip to content</a>
       <header className={`topbar ${styles.header}`}>
         <Link href="/" className="brand-lockup" aria-label="Way Kurap home"><EyeLogo /><h1>Way Kurap</h1></Link>
-        <nav className={styles.navigation} aria-label="Main navigation"><a href="#how-it-works">How it works</a><a href="#frames">Frames</a></nav>
         <Link className={styles.button} href="/step-1">Start photobooth</Link>
+        <div className={`checker-rule ${styles.headerChecker}`} aria-hidden="true" />
+        <nav className={styles.navigation} aria-label="Main navigation"><a href="#how-it-works">How it works</a><a href="#frames">Frames</a></nav>
       </header>
-      <div className="checker-rule" aria-hidden="true" />
       <main id="main">
         <section className={styles.hero} aria-labelledby="hero-title">
           <div>
@@ -87,7 +88,10 @@ export default function Page() {
           <div className={styles.footerStart}><p className={styles.eyebrow}>Start</p><p>Ready to say cheese?</p><Link className={styles.button} href="/step-1">Open the booth</Link></div>
         </div>
         <div className={styles.divider} aria-hidden="true" />
-        <p className={styles.copyright}>© 2026 Way Kurap</p>
+        <div className={styles.footerBottom}>
+          <p className={styles.copyright}>© 2026 Way Kurap</p>
+          <CreatorCredit />
+        </div>
       </footer>
     </div>
   )

@@ -2,6 +2,7 @@ import { EyeLogo } from '@/components/EyeLogo'
 import { PhotoSessionProvider } from '@/components/PhotoSession'
 import Link from 'next/link'
 import { EndSession } from '@/components/EndSession'
+import { CreatorCredit } from '@/components/CreatorCredit'
 
 export default function BoothLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -17,9 +18,14 @@ export default function BoothLayout({ children }: { children: React.ReactNode })
         <div className="checker-rule" aria-hidden="true" />
 
         {children}
-        <footer className="px-6 pb-6 text-center text-sm">
-          <EndSession />
-          <p>End session clears your photos from the booth and turns off the camera. Files you downloaded stay on your device.</p>
+        <footer className="booth-footer">
+          <div className="session-end">
+            <EndSession />
+            <p>End session clears your photos and turns off the camera. Choose Enable camera on the capture screen to start again. Files you downloaded stay on your device.</p>
+          </div>
+          <div className="booth-creator">
+            <CreatorCredit />
+          </div>
         </footer>
       </main>
     </PhotoSessionProvider>

@@ -1,9 +1,10 @@
 'use client'
 
-import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { usePhotoSession } from '@/components/PhotoSession'
 
 export function EndSession() {
-  const { setPhotos } = usePhotoSession()
-  return <Link href="/" replace className="text-button" onClick={() => setPhotos([])}>End session</Link>
+  const { endSession } = usePhotoSession()
+  const router = useRouter()
+  return <button type="button" className="text-button" onClick={() => { endSession(); router.replace('/step-1') }}>End session</button>
 }

@@ -35,7 +35,7 @@ There is no sign-up or photo upload step. Capture, preview, and image compositio
 | Orientation | Arrange the finished strip vertically or horizontally. |
 | PNG export | Download one composed image, with transparent areas around the layout and through film-strip sprocket holes. |
 | Retake | Clear the current photos and return to capture. |
-| End session | Clear photos from the booth and return home, stopping any active camera stream. |
+| End session | Clear photos, stop the camera, and return to capture with **Enable camera** available for a new session. |
 | Visual identity | Cream, red, and dark tones, checkerboard accents, and a pointer-following eye logo create a retro booth aesthetic. |
 
 The layouts adapt to smaller screens. The landing page includes a skip link, and the eye animation respects reduced-motion preferences.
@@ -56,7 +56,7 @@ These illustrations preview the available styles; they are not screenshots of ca
 3. Choose how many photos to take and press the shutter button.
 4. Pose through the countdowns; the booth opens the review screen after completing the sequence.
 5. Pick a frame and orientation, then select **Export photos** to download the PNG.
-6. Select **Retake** for another sequence or **End session** to clear the booth and return home.
+6. Select **Retake** for another sequence or **End session** to clear the photos and stop the camera; the capture screen stays ready for you to select **Enable camera** again.
 
 The exported filename follows `photobooth-strip-<timestamp>.png`. Download or save behavior depends on the browser, especially on mobile devices.
 
@@ -66,7 +66,7 @@ The exported filename follows `photobooth-strip-<timestamp>.png`. Download or sa
 - **Temporary sessions:** photos and selections live in React state while navigating between capture and review. Reloading or leaving the booth for the home page clears that session.
 - **Video only:** the app requests camera access without microphone access.
 - **Camera cleanup:** leaving capture stops camera tracks, including a permission request that finishes after navigation.
-- **User-controlled cleanup:** End session clears the booth's photos; it cannot delete files already downloaded to the device.
+- **User-controlled cleanup:** End session clears the booth's photos, cancels any countdown, and stops camera streams, including any granted after the session ends. It returns to capture with **Enable camera** available and preserves your photo-count, frame, and orientation choices; it cannot delete files already downloaded to the device.
 - **Browser protections:** response headers restrict device permissions, prevent framing and plugin embedding, and limit form destinations, base URLs, MIME sniffing, and referrer disclosure.
 - **Dependency maintenance:** Dependabot checks npm dependencies weekly once its configuration is on the repository's default branch.
 
@@ -166,7 +166,7 @@ app/
     step-2/page.tsx          Review and export screen
 components/
   PhotoSession.tsx          Shared photos and selections
-  EndSession.tsx            Session cleanup and return-home action
+  EndSession.tsx            Session cleanup and return-to-capture action
   EyeLogo.tsx               Interactive eye mark
   ...                       Camera, selector, and action components
 hooks/
