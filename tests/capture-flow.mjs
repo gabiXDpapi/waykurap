@@ -61,15 +61,22 @@ async function main() {
   const { CreatorCredit } = load('components/CreatorCredit.tsx', {
     './CreatorCredit.module.css': { default: {} },
   });
+  const { PhotoPreview } = load('components/PhotoPreview.tsx', {
+    react: { ...React, useEffect() {} },
+    '@/lib/exportPhotos': { renderPhotos() {} },
+  });
+  const reviewUpdates = [];
+  let exportFails = false;
   const mocks = {
+    '@/components/PhotoPreview': { PhotoPreview },
     '@/components/CreatorCredit': { CreatorCredit },
-    react: { ...React, useEffect: effect => effect() },
+    react: { ...React, useEffect: effect => effect(), useState: initial => [initial, value => reviewUpdates.push(value)] },
     'next/navigation': { useRouter: () => router, redirect },
     '@/components/PhotoSession': { usePhotoSession: () => session },
     '@/hooks/useCamera': { useCamera: () => ({ videoRef: { current: null }, stream: {}, error: '', requested: false, enableCamera() {} }) },
     '@/hooks/usePhotoCapture': { usePhotoCapture: () => ({ ...capture, handleTakePhoto: async () => result }) },
     '@/constants/config': { PHOTO_COUNTS: [3, 4, 5, 6] },
-    '@/lib/exportPhotos': { exportPhotos() {} },
+    '@/lib/exportPhotos': { async exportPhotos() { if (exportFails) throw new Error('image failed'); } },
   };
   const { default: CapturePage } = load('app/(booth)/step-1/page.tsx', mocks);
   const { default: ReviewPage } = load('app/(booth)/step-2/page.tsx', mocks);
@@ -136,7 +143,52 @@ async function main() {
   session.photos = captured;
   assert.match(render(ReviewPage), /STEP 02 \/ MAKE IT YOURS/);
   assert.doesNotMatch(render(ReviewPage), /<video/);
-  assert.equal((render(ReviewPage).match(/<img /g) || []).length, 4);
+  assert.match(render(ReviewPage), /Preparing your photos/);
+  const preview = find(ReviewPage(), node => node.type === PhotoPreview);
+  assert.equal(preview.props.photos, captured);
+  assert.equal(preview.props.selectedFrame, session.selectedFrame);
+  assert.equal(preview.props.isVertical, session.isVertical);
+  const exportButton = find(ReviewPage(), node => node.props?.className === 'primary-button export');
+  reviewUpdates.length = 0;
+  await exportButton.props.onClick();
+  assert.deepEqual(reviewUpdates, ['', true, false], 'Export clears errors and resets the busy state');
+  reviewUpdates.length = 0;
+  exportFails = true;
+  await exportButton.props.onClick();
+  assert.deepEqual(reviewUpdates, ['', true, 'Could not export your photos. Please try again.', false], 'Failed export offers a retry and resets the busy state');
+
+  let previewResult = null;
+  let previewEffect;
+  let finishPreview;
+  let failPreview;
+  const { PhotoPreview: AsyncPreview } = load('components/PhotoPreview.tsx', {
+    react: {
+      ...React,
+      useState: () => [previewResult, value => { previewResult = value; }],
+      useEffect: effect => { previewEffect = effect; },
+    },
+    '@/lib/exportPhotos': { renderPhotos: (...args) => {
+      assert.deepEqual(args, [captured, session.selectedFrame, session.isVertical]);
+      return new Promise((resolve, reject) => { finishPreview = resolve; failPreview = reject; });
+    } },
+  });
+  assert.equal(AsyncPreview(preview.props).props.role, 'status');
+  let cancelPreview = previewEffect();
+  finishPreview('data:image/png;base64,watermarked');
+  await new Promise(setImmediate);
+  const renderedPreview = AsyncPreview(preview.props);
+  assert.equal(renderedPreview.props.src, 'data:image/png;base64,watermarked', 'Preview uses the shared export renderer');
+  assert.match(renderedPreview.props.alt, /Waykurap eye logo watermark/);
+  cancelPreview();
+  cancelPreview = previewEffect();
+  cancelPreview();
+  finishPreview('stale-frame');
+  await new Promise(setImmediate);
+  assert.equal(previewResult.src, 'data:image/png;base64,watermarked', 'A stale render cannot replace the current preview');
+  previewEffect();
+  failPreview(new Error('image failed'));
+  await new Promise(setImmediate);
+  assert.equal(AsyncPreview(preview.props).props.role, 'alert');
   // Returning to capture does not erase the session needed by browser Forward.
   render(CapturePage);
   assert.equal(session.photos, captured);
