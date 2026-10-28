@@ -1,25 +1,47 @@
-export async function exportPhotos(photos: string[], selectedFrame: string = "Polaroid", isVertical: boolean = true) {
+export async function renderPhotos(photos: string[], selectedFrame: string = "Polaroid", isVertical: boolean = true) {
   if (photos.length === 0) return;
 
   const isFilmStrip = selectedFrame === "Film Strip";
   const isPolaroid = selectedFrame === "Polaroid";
 
   const loadedImages = await Promise.all(
-    photos.map((src) => {
+    [...photos, "/eye-logo.svg"].map((src) => {
       return new Promise<HTMLImageElement>((resolve, reject) => {
         const img = new Image();
         img.onload = () => resolve(img);
-        img.onerror = reject;
+        img.onerror = () => reject(new Error("Could not load the photos or watermark. Please try again."));
         img.src = src;
       });
     })
   );
 
-  if (loadedImages.length === 0) return;
+  const logo = loadedImages.pop()!;
 
   const imgWidth = loadedImages[0].width;
   const imgHeight = loadedImages[0].height;
   const scale = imgWidth / 400;
+
+  // Coordinates are the bottom-right edge of the lockup, in the current frame.
+  const drawWatermark = (ctx: CanvasRenderingContext2D, right: number, bottom: number, onPhoto = false) => {
+    ctx.save();
+    const size = 22 * scale;
+    const gap = 6 * scale;
+    ctx.font = `600 ${14 * scale}px Arial, Helvetica, sans-serif`;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillStyle = isPolaroid ? "#1F1A1B" : "#FFF8E7";
+    if (onPhoto) {
+      ctx.shadowColor = "#1F1A1B";
+      ctx.shadowBlur = 3 * scale;
+      ctx.lineWidth = 2 * scale;
+      ctx.strokeStyle = "#1F1A1B";
+      ctx.strokeText("Waykurap", right, bottom - size / 2);
+    }
+    ctx.fillText("Waykurap", right, bottom - size / 2);
+    ctx.shadowColor = "transparent";
+    ctx.drawImage(logo, right - ctx.measureText("Waykurap").width - gap - size, bottom - size, size, size);
+    ctx.restore();
+  };
 
   let canvasWidth, canvasHeight;
   const canvas = document.createElement("canvas");
@@ -45,7 +67,7 @@ export async function exportPhotos(photos: string[], selectedFrame: string = "Po
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) throw new Error("Your browser could not prepare the photo. Please try again.");
 
     const polaroidRotations = [-6, 4, -3, 5, -5, 3];
     const polaroidShifts = [-10, 10, -5, 15, -10, 8];
@@ -94,14 +116,19 @@ export async function exportPhotos(photos: string[], selectedFrame: string = "Po
       ctx.lineWidth = Math.max(1, 2 * scale);
       ctx.strokeRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight);
 
+      if (i === loadedImages.length - 1) {
+        drawWatermark(ctx, cardWidth / 2 - pPadX, cardHeight / 2 - 5 * scale);
+      }
+
       ctx.restore();
     });
 
   } else {
     // Film Strip or default layout
-    const paddingX = (isFilmStrip ? (isVertical ? 40 : 24) : 16) * scale;
-    const paddingY = (isFilmStrip ? (isVertical ? 32 : 40) : 16) * scale;
-    const paddingBottom = (isFilmStrip ? (isVertical ? 32 : 40) : 64) * scale;
+    const paddingX = (isFilmStrip ? (isVertical ? 40 : 24) : 0) * scale;
+    const paddingY = (isFilmStrip ? (isVertical ? 32 : 40) : 0) * scale;
+    // Leave the horizontal film's bottom sprocket row clear of the watermark.
+    const paddingBottom = (isFilmStrip ? (isVertical ? 40 : 64) : 0) * scale;
     const gap = (isFilmStrip ? 24 : 16) * scale;
 
     if (isVertical) {
@@ -115,7 +142,7 @@ export async function exportPhotos(photos: string[], selectedFrame: string = "Po
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) throw new Error("Your browser could not prepare the photo. Please try again.");
 
     if (isFilmStrip) {
       ctx.fillStyle = "#0f0f0f";
@@ -148,13 +175,18 @@ export async function exportPhotos(photos: string[], selectedFrame: string = "Po
 
     let currentX = paddingX;
     let currentY = paddingY;
-    loadedImages.forEach((img) => {
+    loadedImages.forEach((img, i) => {
       ctx.drawImage(img, currentX, currentY, imgWidth, imgHeight);
 
       if (!isFilmStrip) {
         ctx.strokeStyle = "rgba(0, 0, 0, 0.05)";
         ctx.lineWidth = Math.max(1, 2 * scale);
         ctx.strokeRect(currentX, currentY, imgWidth, imgHeight);
+      }
+
+      if (i === loadedImages.length - 1) {
+        drawWatermark(ctx, currentX + imgWidth - (isFilmStrip ? 0 : 12 * scale),
+          currentY + imgHeight + (isFilmStrip ? 30 : -12) * scale, !isFilmStrip);
       }
 
       if (isVertical) {
@@ -165,7 +197,12 @@ export async function exportPhotos(photos: string[], selectedFrame: string = "Po
     });
   }
 
-  const dataUrl = canvas.toDataURL("image/png");
+  return canvas.toDataURL("image/png");
+}
+
+export async function exportPhotos(photos: string[], selectedFrame: string = "Polaroid", isVertical: boolean = true) {
+  const dataUrl = await renderPhotos(photos, selectedFrame, isVertical);
+  if (!dataUrl) return;
   const a = document.createElement("a");
   a.href = dataUrl;
   a.download = `photobooth-strip-${Date.now()}.png`;
