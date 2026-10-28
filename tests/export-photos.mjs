@@ -57,8 +57,8 @@ for (const frame of ['No Frame', 'Polaroid', 'Film Strip']) {
     assert.equal(marks.length, 1, 'One eye logo per strip');
     assert.equal(texts.length, 1, 'One wordmark per strip');
     assert.equal(texts[0].text, 'Waykurap');
-    assert.equal(texts[0].opacity, 0.65, 'Wordmark stays subtle');
-    assert.deepEqual(logoOpacities, [0.65], 'Eye logo matches the wordmark opacity');
+    assert.equal(texts[0].opacity, 1, 'Wordmark uses full opacity');
+    assert.deepEqual(logoOpacities, [1], 'Eye logo matches the wordmark opacity');
     const [x, y, w, h] = marks[0];
     const [px, py, pw, ph] = draws.at(-1).rect;
     const right = texts[0].x;
