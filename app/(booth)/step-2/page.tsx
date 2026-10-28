@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { usePhotoSession } from '@/components/PhotoSession'
 import { Check, Download, RotateCcw } from 'lucide-react'
 import { exportPhotos } from '@/lib/exportPhotos'
+import { PhotoPreview } from '@/components/PhotoPreview'
 
 const frames = [
   { name: 'No Frame', icon: '▦', detail: 'Clean & simple' },
@@ -16,11 +17,25 @@ const frames = [
 export default function Page() {
   const router = useRouter()
   const { photos, setPhotos, selectedFrame, setSelectedFrame, isVertical, setIsVertical } = usePhotoSession()
+  const [exportError, setExportError] = useState('')
+  const [isExporting, setIsExporting] = useState(false)
   useEffect(() => {
     if (photos.length === 0) router.replace('/step-1')
   }, [photos.length, router])
 
   if (photos.length === 0) return null
+
+  const handleExport = async () => {
+    setExportError('')
+    setIsExporting(true)
+    try {
+      await exportPhotos(photos, selectedFrame, isVertical)
+    } catch {
+      setExportError('Could not export your photos. Please try again.')
+    } finally {
+      setIsExporting(false)
+    }
+  }
 
   return (
     <section className="workspace">
@@ -37,18 +52,15 @@ export default function Page() {
         </div>
 
           <div className={`review-card ${isVertical ? 'vertical' : 'horizontal'}`}>
-            <div className={`photo-layout ${selectedFrame.toLowerCase().replace(' ', '-')}`}>
-              {photos.map((photo, index) => (
-                <img key={index} src={photo} alt={`Captured photobooth moment ${index + 1}`} />
-              ))}
-            </div>
+            <PhotoPreview key={`${selectedFrame}-${isVertical}`} photos={photos} selectedFrame={selectedFrame} isVertical={isVertical} />
           </div>
       </div>
       <aside className="control-panel">
         <div className="panel-section"><div className="section-label"><span>CHOOSE A FRAME</span></div><div className="frame-list">{frames.map(item => <button key={item.name} className={selectedFrame === item.name ? 'frame-option selected' : 'frame-option'} onClick={() => setSelectedFrame(item.name)}><span className="frame-icon">{item.icon}</span><span><strong>{item.name}</strong><small>{item.detail}</small></span>{selectedFrame === item.name && <Check size={17} />}</button>)}</div></div>
         <div className="panel-divider" />
         <div className="panel-section"><div className="section-label"><span>ORIENTATION</span></div><div className="orientation-toggle"><button className={isVertical ? 'selected' : ''} onClick={() => setIsVertical(true)}>VERTICAL</button><button className={!isVertical ? 'selected' : ''} onClick={() => setIsVertical(false)}>HORIZONTAL</button></div></div>
-        <button className="primary-button export" onClick={() => exportPhotos(photos, selectedFrame, isVertical)}><Download size={20} /> EXPORT PHOTOS</button>
+        <button className="primary-button export" onClick={handleExport} disabled={isExporting}><Download size={20} /> {isExporting ? 'EXPORTING…' : 'EXPORT PHOTOS'}</button>
+        {exportError && <p role="alert">{exportError}</p>}
         <button className="secondary-button" onClick={() => { setPhotos([]); router.replace('/step-1') }}><RotateCcw size={17} /> RETAKE</button>
       </aside>
     </section>
